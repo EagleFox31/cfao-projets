@@ -50,3 +50,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Variable `APPFACTORY_APP_CLIENT_ID` posée sur ce dépôt (même App que AgenStart). Le `concurrency` du workflow appelant retiré (porté par le réutilisable) : le run démarre désormais.
 - Le `plan` s'arrête à « Validate governance authentication » : secret `APPFACTORY_APP_PRIVATE_KEY` absent sur cfao-projets (présent sur AgenStart, non lisible). À faire par le propriétaire : installer l'App appfactory sur cfao-projets et copier le secret.
 - Ensuite : relancer `plan` (workflow_dispatch), relire, `apply`, `plan` → NO-OP.
+
+## 2026-11-05 20:55 — Plan relancé : toujours bloqué par la clé App
+
+- Run plan 42098267663 : échec à « Validate governance authentication », secret `APPFACTORY_APP_PRIVATE_KEY` absent. Un secret Actions n'est pas relisible par API : impossible de le copier depuis AgenStart. L'installation de l'App sur le dépôt n'est pas faisable avec le jeton `gh` (endpoints réservés aux jetons d'App) : action UI du propriétaire (github.com/settings/installations).
+- Commande une fois la clé en main : `gh secret set APPFACTORY_APP_PRIVATE_KEY -R EagleFox31/cfao-projets < chemin/cle.pem`, puis relancer le plan.
