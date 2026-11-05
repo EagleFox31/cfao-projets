@@ -1,0 +1,31 @@
+# Ressource « tache » d'un projet (attributs du projet + assigneId).
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: default
+  resource: tache
+  importDerivedRoles: ["projets"]
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
+    resourceSchema:
+      ref: cerbos:///ressource.json
+  rules:
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["contributeur", "proprietaire", "technique"]
+
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["contributeur", "proprietaire", "technique"]
+
+    # La personne assignee met a jour sa propre tache, meme simple observatrice.
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["connecte"]
+      condition:
+        match:
+          expr: request.resource.attr.assigneId == request.principal.id
+
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["chef_projet", "proprietaire", "technique"]

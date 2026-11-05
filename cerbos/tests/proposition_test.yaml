@@ -1,0 +1,91 @@
+# Tests de la politique « proposition » : proposer est large, decider est etroit.
+name: PropositionSuite
+description: Acces a la ressource proposition
+
+principals:
+  formateur:
+    id: f-1
+    roles: ["trainer"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  apprenant:
+    id: a-1
+    roles: ["learner"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  createur:
+    id: o-1
+    roles: ["dps"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  anonyme:
+    id: anonymous
+    roles: ["_anon"]
+    attr: { scopeNode: "" }
+  superadmin:
+    id: s-1
+    roles: ["superadmin"]
+    attr: { scopeNode: "" }
+
+resources:
+  en_chef:
+    kind: proposition
+    id: "_new"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "chef", auteurId: "" }
+  en_demandeur:
+    kind: proposition
+    id: "_new"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "demandeur", auteurId: "" }
+  en_observateur:
+    kind: proposition
+    id: "_new"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "observateur", auteurId: "" }
+  hors_projet:
+    kind: proposition
+    id: "_new"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "", auteurId: "" }
+
+tests:
+  - name: un membre, meme demandeur ou observateur, propose ; seul le chef decide
+    input:
+      principals: ["formateur", "apprenant"]
+      resources: ["en_chef", "en_demandeur", "en_observateur"]
+      actions: ["create", "read", "decide"]
+    expected:
+      - principal: formateur
+        resource: en_chef
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, decide: EFFECT_ALLOW }
+      - principal: formateur
+        resource: en_demandeur
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, decide: EFFECT_DENY }
+      - principal: apprenant
+        resource: en_observateur
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, decide: EFFECT_DENY }
+      - principal: apprenant
+        resource: en_demandeur
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, decide: EFFECT_DENY }
+      - principal: formateur
+        resource: en_observateur
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, decide: EFFECT_DENY }
+      - principal: apprenant
+        resource: en_chef
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, decide: EFFECT_ALLOW }
+
+  - name: hors projet, un gestionnaire du perimetre propose, un apprenant non
+    input:
+      principals: ["formateur", "apprenant", "anonyme", "createur", "superadmin"]
+      resources: ["hors_projet"]
+      actions: ["create", "decide"]
+    expected:
+      - principal: formateur
+        resource: hors_projet
+        actions: { create: EFFECT_ALLOW, decide: EFFECT_DENY }
+      - principal: apprenant
+        resource: hors_projet
+        actions: { create: EFFECT_DENY, decide: EFFECT_DENY }
+      - principal: anonyme
+        resource: hors_projet
+        actions: { create: EFFECT_DENY, decide: EFFECT_DENY }
+      - principal: createur
+        resource: hors_projet
+        actions: { create: EFFECT_ALLOW, decide: EFFECT_ALLOW }
+      - principal: superadmin
+        resource: hors_projet
+        actions: { create: EFFECT_ALLOW, decide: EFFECT_ALLOW }

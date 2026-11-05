@@ -1,0 +1,22 @@
+# Ressource « proposition » : un autre profil propose une modification,
+# un chef de projet la tranche.
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: default
+  resource: proposition
+  importDerivedRoles: ["projets"]
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
+    resourceSchema:
+      ref: cerbos:///ressource.json
+  rules:
+    # Proposer : quiconque voit le projet (membre, meme observateur ou
+    # demandeur, ou gestionnaire du perimetre).
+    - actions: ["create", "read"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["membre", "proprietaire", "technique", "meme_perimetre"]
+
+    - actions: ["decide"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["chef_projet", "proprietaire", "technique"]

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "ownerId": { "type": "string", "minLength": 1 },
+    "scopeNode": { "type": "string" },
+    "brand": { "type": "string" },
+    "statut": { "type": "string" },
+    "roleMembre": { "type": "string", "enum": ["", "chef", "contributeur", "observateur", "demandeur"] },
+    "assigneId": { "type": "string" },
+    "auteurId": { "type": "string" }
+  },
+  "required": ["ownerId"]
+}

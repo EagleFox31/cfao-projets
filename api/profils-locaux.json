@@ -1,0 +1,92 @@
+[
+  {
+    "identifiant": "formateur.demo",
+    "id": "f-demo",
+    "roles": [
+      "trainer"
+    ],
+    "firstName": "Formateur",
+    "lastName": "Démo",
+    "email": "formateur.demo@example.invalid",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ]
+  },
+  {
+    "identifiant": "ki.demo",
+    "id": "ki-demo",
+    "roles": [
+      "learner",
+      "ki"
+    ],
+    "firstName": "Suppléant",
+    "lastName": "Démo",
+    "scopeNodes": [
+      "CIV"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ],
+    "email": "ki.demo@example.invalid"
+  },
+  {
+    "identifiant": "apprenant.demo",
+    "id": "a-demo",
+    "roles": [
+      "learner"
+    ],
+    "firstName": "Apprenant",
+    "lastName": "Démo",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ],
+    "email": "apprenant.demo@example.invalid"
+  },
+  {
+    "identifiant": "chef.demo",
+    "id": "c-demo",
+    "roles": [
+      "team_manager"
+    ],
+    "firstName": "Chef",
+    "lastName": "Démo",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ],
+    "email": "chef.demo@example.invalid"
+  },
+  {
+    "identifiant": "admin.demo",
+    "id": "s-demo",
+    "roles": [
+      "superadmin"
+    ],
+    "firstName": "Admin",
+    "lastName": "Démo",
+    "scopeNodes": [],
+    "brands": [],
+    "departments": [],
+    "email": "admin.demo@example.invalid"
+  }
+]

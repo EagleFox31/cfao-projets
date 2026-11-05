@@ -1,0 +1,4 @@
+# Tests du service (non installes dans l'image).
+-r requirements.txt
+pytest>=8.0.0
+pytest-django>=4.8.0

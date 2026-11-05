@@ -1,0 +1,152 @@
+# Tests de la politique « projet » (cerbos compile --tests).
+# Les roles derives dependent de `roleMembre` (role tenu dans le projet),
+# `ownerId` (createur) et `scopeNode` (perimetre) poses par l'API.
+name: ProjetSuite
+description: Acces a la ressource projet
+
+principals:
+  formateur:
+    id: f-1
+    roles: ["trainer"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: ["toyota"] }
+  formateur_civ:
+    id: f-2
+    roles: ["trainer"]
+    attr: { scopeNode: "CIV", scopeNodes: ["CIV"], brands: [] }
+  createur:
+    id: o-1
+    roles: ["team_manager"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  apprenant:
+    id: a-1
+    roles: ["learner"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  partenaire:
+    id: p-1
+    roles: ["b2b_partner"]
+    attr: { scopeNode: "", scopeNodes: [], brands: [] }
+  anonyme:
+    id: anonymous
+    roles: ["_anon"]
+    attr: { scopeNode: "" }
+  superadmin:
+    id: s-1
+    roles: ["superadmin"]
+    attr: { scopeNode: "" }
+  build_team:
+    id: b-1
+    roles: ["build_team"]
+    attr: { scopeNode: "" }
+
+resources:
+  en_chef:
+    kind: projet
+    id: "1"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "chef" }
+  en_contributeur:
+    kind: projet
+    id: "1"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "contributeur" }
+  en_observateur:
+    kind: projet
+    id: "1"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "observateur" }
+  non_membre:
+    kind: projet
+    id: "1"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "" }
+  non_membre_sans_perimetre:
+    kind: projet
+    id: "2"
+    attr: { ownerId: "o-1", scopeNode: "", brand: "", statut: "en_cours", roleMembre: "" }
+  nouveau:
+    kind: projet
+    id: "_new"
+    attr: { ownerId: "f-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "" }
+
+tests:
+  - name: creer un projet est reserve aux profils gestionnaires
+    input:
+      principals: ["formateur", "apprenant", "partenaire", "anonyme", "build_team"]
+      resources: ["nouveau"]
+      actions: ["create"]
+    expected:
+      - principal: formateur
+        resource: nouveau
+        actions: { create: EFFECT_ALLOW }
+      - principal: build_team
+        resource: nouveau
+        actions: { create: EFFECT_ALLOW }
+      - principal: apprenant
+        resource: nouveau
+        actions: { create: EFFECT_DENY }
+      - principal: partenaire
+        resource: nouveau
+        actions: { create: EFFECT_DENY }
+      - principal: anonyme
+        resource: nouveau
+        actions: { create: EFFECT_DENY }
+
+  - name: le chef de projet gere tout sauf la suppression
+    input:
+      principals: ["formateur", "apprenant"]
+      resources: ["en_chef"]
+      actions: ["read", "update", "manage_members", "sync", "delete"]
+    expected:
+      - principal: formateur
+        resource: en_chef
+        actions: { read: EFFECT_ALLOW, update: EFFECT_ALLOW, manage_members: EFFECT_ALLOW, sync: EFFECT_ALLOW, delete: EFFECT_DENY }
+      - principal: apprenant
+        resource: en_chef
+        actions: { read: EFFECT_ALLOW, update: EFFECT_ALLOW, manage_members: EFFECT_ALLOW, sync: EFFECT_ALLOW, delete: EFFECT_DENY }
+
+  - name: contributeur et observateur lisent, seul le contributeur synchronise
+    input:
+      principals: ["formateur"]
+      resources: ["en_contributeur", "en_observateur"]
+      actions: ["read", "update", "manage_members", "sync", "delete"]
+    expected:
+      - principal: formateur
+        resource: en_contributeur
+        actions: { read: EFFECT_ALLOW, update: EFFECT_DENY, manage_members: EFFECT_DENY, sync: EFFECT_ALLOW, delete: EFFECT_DENY }
+      - principal: formateur
+        resource: en_observateur
+        actions: { read: EFFECT_ALLOW, update: EFFECT_DENY, manage_members: EFFECT_DENY, sync: EFFECT_DENY, delete: EFFECT_DENY }
+
+  - name: hors du projet, seul un gestionnaire du meme perimetre lit
+    input:
+      principals: ["formateur", "formateur_civ", "apprenant", "anonyme"]
+      resources: ["non_membre", "non_membre_sans_perimetre"]
+      actions: ["read", "update"]
+    expected:
+      - principal: formateur
+        resource: non_membre
+        actions: { read: EFFECT_ALLOW, update: EFFECT_DENY }
+      - principal: formateur
+        resource: non_membre_sans_perimetre
+        actions: { read: EFFECT_DENY, update: EFFECT_DENY }
+      - principal: formateur_civ
+        resource: non_membre
+        actions: { read: EFFECT_DENY, update: EFFECT_DENY }
+      - principal: apprenant
+        resource: non_membre
+        actions: { read: EFFECT_DENY, update: EFFECT_DENY }
+      - principal: anonyme
+        resource: non_membre
+        actions: { read: EFFECT_DENY, update: EFFECT_DENY }
+
+  - name: le createur et l equipe technique
+    input:
+      principals: ["createur", "superadmin", "build_team"]
+      resources: ["non_membre"]
+      actions: ["read", "update", "manage_members", "sync", "delete"]
+    expected:
+      - principal: createur
+        resource: non_membre
+        actions: { read: EFFECT_ALLOW, update: EFFECT_ALLOW, manage_members: EFFECT_ALLOW, sync: EFFECT_ALLOW, delete: EFFECT_ALLOW }
+      - principal: superadmin
+        resource: non_membre
+        actions: { read: EFFECT_ALLOW, update: EFFECT_ALLOW, manage_members: EFFECT_ALLOW, sync: EFFECT_ALLOW, delete: EFFECT_ALLOW }
+      - principal: build_team
+        resource: non_membre
+        actions: { read: EFFECT_ALLOW, update: EFFECT_ALLOW, manage_members: EFFECT_ALLOW, sync: EFFECT_ALLOW, delete: EFFECT_DENY }

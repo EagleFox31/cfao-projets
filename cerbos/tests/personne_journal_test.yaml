@@ -1,0 +1,77 @@
+# Tests des politiques « personne » et « journal ».
+name: PersonneJournalSuite
+description: Annuaire et journal des erreurs
+
+principals:
+  apprenant:
+    id: a-1
+    roles: ["learner"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  formateur:
+    id: f-1
+    roles: ["trainer"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  anonyme:
+    id: anonymous
+    roles: ["_anon"]
+    attr: { scopeNode: "" }
+  superadmin:
+    id: s-1
+    roles: ["superadmin"]
+    attr: { scopeNode: "" }
+
+resources:
+  moi:
+    kind: personne
+    id: "a-1"
+    attr: { ownerId: "a-1" }
+  autre:
+    kind: personne
+    id: "f-1"
+    attr: { ownerId: "f-1" }
+  journal:
+    kind: journal
+    id: "*"
+    attr: { ownerId: "a-1" }
+
+tests:
+  - name: chacun voit l annuaire et modifie sa propre fiche
+    input:
+      principals: ["apprenant", "anonyme", "superadmin"]
+      resources: ["moi", "autre"]
+      actions: ["list", "read", "update"]
+    expected:
+      - principal: apprenant
+        resource: moi
+        actions: { list: EFFECT_ALLOW, read: EFFECT_ALLOW, update: EFFECT_ALLOW }
+      - principal: apprenant
+        resource: autre
+        actions: { list: EFFECT_ALLOW, read: EFFECT_ALLOW, update: EFFECT_DENY }
+      - principal: anonyme
+        resource: autre
+        actions: { list: EFFECT_DENY, read: EFFECT_DENY, update: EFFECT_DENY }
+      - principal: superadmin
+        resource: autre
+        actions: { list: EFFECT_ALLOW, read: EFFECT_ALLOW, update: EFFECT_ALLOW }
+      - principal: superadmin
+        resource: moi
+        actions: { list: EFFECT_ALLOW, read: EFFECT_ALLOW, update: EFFECT_ALLOW }
+
+  - name: tout connecte signale une erreur, seule l equipe technique lit le journal
+    input:
+      principals: ["apprenant", "formateur", "anonyme", "superadmin"]
+      resources: ["journal"]
+      actions: ["create", "read", "delete"]
+    expected:
+      - principal: apprenant
+        resource: journal
+        actions: { create: EFFECT_ALLOW, read: EFFECT_DENY, delete: EFFECT_DENY }
+      - principal: formateur
+        resource: journal
+        actions: { create: EFFECT_ALLOW, read: EFFECT_DENY, delete: EFFECT_DENY }
+      - principal: anonyme
+        resource: journal
+        actions: { create: EFFECT_DENY, read: EFFECT_DENY, delete: EFFECT_DENY }
+      - principal: superadmin
+        resource: journal
+        actions: { create: EFFECT_ALLOW, read: EFFECT_ALLOW, delete: EFFECT_ALLOW }

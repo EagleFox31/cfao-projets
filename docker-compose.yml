@@ -1,0 +1,111 @@
+# Gestionnaire de projets, module detachable : cette pile se lance seule,
+# sans rien emprunter au reste de la plateforme.
+#   cp .env.example .env && docker compose up --build -d
+# Interface et API : http://localhost:8094 (PJ_PORT). Seule la passerelle
+# est publiee (127.0.0.1 par defaut, PJ_BIND) ; l'API, la base et Cerbos restent
+# sur le reseau interne.
+# Le service `synchro` relit GitHub a intervalle regulier avec la meme image que l'API.
+name: cfao-projets
+
+# Journaux bornes (3 x 10 Mo par conteneur) : sans cela, ils grossissent
+# sans fin sur le disque de Docker.
+x-journaux: &journaux
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 256m
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-projets}
+      POSTGRES_USER: ${POSTGRES_USER:-projets}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}
+    volumes:
+      - pj-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-projets} -d ${POSTGRES_DB:-projets}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cerbos:
+    image: ghcr.io/cerbos/cerbos:0.40.0
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 256m
+    command: ["server", "--config=/config/config.yaml"]
+    environment:
+      CERBOS_NO_TELEMETRY: "1"
+    volumes:
+      - ./cerbos/policies:/policies:ro
+      - ./cerbos/config.yaml:/config/config.yaml:ro
+    healthcheck:
+      test: ["CMD", "/cerbos", "healthcheck", "--config=/config/config.yaml"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 1g
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-projets}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-projets}
+      CERBOS_HTTP: http://cerbos:3592
+      # Le module fixe son propre nom de cookie (meme hote = meme site que le portail).
+      COOKIE_SESSION: ${COOKIE_SESSION:-cfao_pj_session}
+      # Pages autorisees a ecrire : la passerelle, sur son port publie.
+      ORIGINES_AUTORISEES: ${ORIGINES_AUTORISEES:-http://localhost:${PJ_PORT:-8094},http://127.0.0.1:${PJ_PORT:-8094}}
+      PJ_URL_PUBLIQUE: ${PJ_URL_PUBLIQUE:-http://localhost:${PJ_PORT:-8094}}
+    volumes:
+      # Profils locaux et, en mode local, empreintes des mots de passe.
+      - pj-donnees:/donnees
+    depends_on:
+      db: { condition: service_healthy }
+      cerbos: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5175/apercu/sante"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Lecture periodique des depots GitHub (commits, auteurs, diff). Sans jeton,
+  # seuls les depots publics sont lus ; le webhook reste optionnel.
+  synchro:
+    build: ./api
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 256m
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-projets}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-projets}
+      CERBOS_HTTP: http://cerbos:3592
+      PJ_URL_PUBLIQUE: ${PJ_URL_PUBLIQUE:-http://localhost:${PJ_PORT:-8094}}
+    command: ["sh", "-c", "python manage.py synchroniser_github --boucle --intervalle ${SYNCHRO_INTERVALLE:-900}"]
+    depends_on:
+      api: { condition: service_healthy }
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 128m
+    ports:
+      # PJ_BIND : 127.0.0.1 par defaut ; ne l'elargir que derriere un proxy TLS (voir README).
+      - "${PJ_BIND:-127.0.0.1}:${PJ_PORT:-8094}:80"
+    depends_on:
+      api: { condition: service_healthy }
+
+volumes:
+  pj-db:
+  pj-donnees:

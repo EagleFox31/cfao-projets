@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "fallback": "all",
+  "ignorePaths": [
+    "README.md",
+    "PASSATION*.md",
+    "CLAUDE.md",
+    "docs/**",
+    ".claude/**",
+    ".gitignore",
+    ".env.example",
+    "env.prod.example"
+  ],
+  "surfaces": {
+    "api": {
+      "paths": ["api/**", "Makefile"],
+      "gates": ["api"]
+    },
+    "web": {
+      "paths": ["web/**", "gateway/**"],
+      "gates": ["web"]
+    },
+    "cerbos": {
+      "paths": ["cerbos/**"],
+      "gates": ["cerbos", "api"]
+    },
+    "conteneurs": {
+      "paths": ["docker-compose*.yml", ".dockerignore", "api/Dockerfile", "gateway/Dockerfile", "deploy.sh", "deploy.ps1"],
+      "gates": ["conteneurs"]
+    },
+    "ci": {
+      "paths": [".github/**"],
+      "gates": ["api", "web", "cerbos", "conteneurs"]
+    }
+  }
+}

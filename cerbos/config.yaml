@@ -1,0 +1,23 @@
+# PDP Cerbos du gestionnaire de projets (default-deny).
+# Toute action absente des politiques est refusee ; un attribut manquant
+# ou mal type (schemas `_schemas/`) fait rejeter la demande.
+server:
+  httpListenAddr: ":3592"
+  grpcListenAddr: ":3593"
+
+storage:
+  driver: "disk"
+  disk:
+    directory: /policies
+    watchForChanges: true
+
+schema:
+  enforcement: reject
+
+audit:
+  enabled: true
+  backend: local
+  local:
+    storagePath: /tmp/cerbos/audit.log
+    # Une semaine par defaut : trois jours suffisent et bornent le volume.
+    retentionPeriod: 72h

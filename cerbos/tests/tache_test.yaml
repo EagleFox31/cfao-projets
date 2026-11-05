@@ -1,0 +1,75 @@
+# Tests de la politique « tache ».
+name: TacheSuite
+description: Acces a la ressource tache
+
+principals:
+  formateur:
+    id: f-1
+    roles: ["trainer"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  apprenant:
+    id: a-1
+    roles: ["learner"]
+    attr: { scopeNode: "CMR", scopeNodes: ["CMR"], brands: [] }
+  anonyme:
+    id: anonymous
+    roles: ["_anon"]
+    attr: { scopeNode: "" }
+
+resources:
+  en_chef:
+    kind: tache
+    id: "10"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "chef", assigneId: "" }
+  en_contributeur:
+    kind: tache
+    id: "10"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "contributeur", assigneId: "" }
+  en_observateur:
+    kind: tache
+    id: "10"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "observateur", assigneId: "" }
+  assignee_observateur:
+    kind: tache
+    id: "11"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "observateur", assigneId: "a-1" }
+  meme_perimetre:
+    kind: tache
+    id: "10"
+    attr: { ownerId: "o-1", scopeNode: "CMR", brand: "", statut: "en_cours", roleMembre: "", assigneId: "" }
+
+tests:
+  - name: chef et contributeur creent et modifient, seul le chef supprime
+    input:
+      principals: ["formateur"]
+      resources: ["en_chef", "en_contributeur", "en_observateur", "meme_perimetre"]
+      actions: ["create", "update", "delete"]
+    expected:
+      - principal: formateur
+        resource: en_chef
+        actions: { create: EFFECT_ALLOW, update: EFFECT_ALLOW, delete: EFFECT_ALLOW }
+      - principal: formateur
+        resource: en_contributeur
+        actions: { create: EFFECT_ALLOW, update: EFFECT_ALLOW, delete: EFFECT_DENY }
+      - principal: formateur
+        resource: en_observateur
+        actions: { create: EFFECT_DENY, update: EFFECT_DENY, delete: EFFECT_DENY }
+      - principal: formateur
+        resource: meme_perimetre
+        actions: { create: EFFECT_DENY, update: EFFECT_DENY, delete: EFFECT_DENY }
+
+  - name: la personne assignee met a jour sa tache, pas les autres
+    input:
+      principals: ["apprenant", "anonyme"]
+      resources: ["assignee_observateur", "en_observateur"]
+      actions: ["update", "delete"]
+    expected:
+      - principal: apprenant
+        resource: assignee_observateur
+        actions: { update: EFFECT_ALLOW, delete: EFFECT_DENY }
+      - principal: apprenant
+        resource: en_observateur
+        actions: { update: EFFECT_DENY, delete: EFFECT_DENY }
+      - principal: anonyme
+        resource: assignee_observateur
+        actions: { update: EFFECT_DENY, delete: EFFECT_DENY }

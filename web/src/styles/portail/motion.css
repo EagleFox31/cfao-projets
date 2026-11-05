@@ -1,0 +1,42 @@
+/* Copie de frontend/src/styles/motion.css (portail CFAO Academy) : même rendu que le portail. Resynchroniser depuis le portail, ne pas modifier ici. */
+/* ═══════════════════════════════════════════════════
+   Motion — transition de page (morph) + skeleton shimmer
+   ═══════════════════════════════════════════════════ */
+
+/* ── Morph de route : crossfade + léger scale ─────── */
+.route-motion {
+  animation: routeIn 0.30s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform, filter;
+}
+@keyframes routeIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.994); filter: blur(3px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* ── Skeleton shimmer ─────────────────────────────── */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background: #e7e9f1;
+  border-radius: 8px;
+}
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  animation: skelShimmer 1.3s ease-in-out infinite;
+}
+@keyframes skelShimmer { 100% { transform: translateX(100%); } }
+
+.skel--text { height: 11px; border-radius: 5px; }
+.skel--title { height: 16px; width: 42%; border-radius: 6px; }
+.skel--pill { height: 20px; width: 72px; border-radius: 999px; }
+.skel--bar { height: 7px; border-radius: 999px; }
+.skel--dim { background: #eef0f6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .route-motion { animation: none; }
+  .skel::after { animation: none; }
+}

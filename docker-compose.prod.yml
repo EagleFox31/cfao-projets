@@ -1,0 +1,117 @@
+# Gestionnaire de projets en production : images Docker Hub
+# (antifragile237), aucun fichier source sur le serveur.
+#   1. Copier ce fichier, deploy.sh|ps1, reprise.sh|ps1 et env.prod.example dans un dossier.
+#   2. ./deploy.sh (ou .\deploy.ps1) : genere les secrets dans .env, deduit l'adresse LAN, demarre.
+#   3. Une fois : ./reprise.sh <export formateurs> (base, photos et profils).
+#   4. Creer chaque compte : docker compose -f docker-compose.prod.yml exec api python manage.py mot_de_passe <identifiant>
+# Mode local : comptes a mot de passe du module, sans Keycloak. Les vrais
+# profils se deposent dans le volume pj-donnees (/donnees/profils-locaux.json).
+name: cfao-projets
+
+x-journaux: &journaux
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 256m
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-projets}
+      POSTGRES_USER: ${POSTGRES_USER:-projets}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}
+    volumes:
+      - pj-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-projets} -d ${POSTGRES_DB:-projets}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cerbos:
+    image: antifragile237/cfao-projets-cerbos:${PJ_VERSION:-v0.1.0}
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 256m
+    environment:
+      CERBOS_NO_TELEMETRY: "1"
+    healthcheck:
+      test: ["CMD", "/cerbos", "healthcheck", "--config=/config/config.yaml"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: antifragile237/cfao-projets-api:${PJ_VERSION:-v0.1.0}
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 1g
+    env_file: .env
+    environment:
+      DEPLOYMENT_MODE: local
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY est obligatoire (aleatoire, 50 caracteres)}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?ALLOWED_HOSTS est obligatoire (nom public du module)}
+      ORIGINES_AUTORISEES: ${ORIGINES_AUTORISEES:?ORIGINES_AUTORISEES est obligatoire (origine publique exacte)}
+      # True derriere HTTPS ; False seulement en HTTP sur un reseau de confiance.
+      COOKIE_SECURE: ${COOKIE_SECURE:?COOKIE_SECURE est obligatoire (True derriere HTTPS)}
+      COOKIE_SESSION: ${COOKIE_SESSION:-cfao_pj_session}
+      COMPTES_LOCAUX: /donnees/comptes.sqlite3
+      PROFILS_LOCAUX: ${PROFILS_LOCAUX:-/donnees/profils-locaux.json}
+      DATABASE_URL: postgres://${POSTGRES_USER:-projets}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-projets}
+      CERBOS_HTTP: http://cerbos:3592
+      PJ_URL_PUBLIQUE: ${PJ_PUBLIC_URL:-http://localhost:${PJ_PORT:-8094}}
+    volumes:
+      - pj-donnees:/donnees
+    depends_on:
+      db: { condition: service_healthy }
+      cerbos: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:5175/apercu/sante"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  synchro:
+    image: antifragile237/cfao-projets-api:${PJ_VERSION:-v0.1.0}
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 256m
+    env_file: .env
+    environment:
+      DEPLOYMENT_MODE: local
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY est obligatoire (aleatoire, 50 caracteres)}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?ALLOWED_HOSTS est obligatoire (nom public du module)}
+      ORIGINES_AUTORISEES: ${ORIGINES_AUTORISEES:?ORIGINES_AUTORISEES est obligatoire (origine publique exacte)}
+      COOKIE_SECURE: ${COOKIE_SECURE:?COOKIE_SECURE est obligatoire (True derriere HTTPS)}
+      COMPTES_LOCAUX: /donnees/comptes.sqlite3
+      PROFILS_LOCAUX: ${PROFILS_LOCAUX:-/donnees/profils-locaux.json}
+      DATABASE_URL: postgres://${POSTGRES_USER:-projets}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-projets}
+      CERBOS_HTTP: http://cerbos:3592
+      PJ_URL_PUBLIQUE: ${PJ_PUBLIC_URL:-http://localhost:${PJ_PORT:-8094}}
+    volumes:
+      - pj-donnees:/donnees
+    command: ["sh", "-c", "python manage.py synchroniser_github --boucle --intervalle ${SYNCHRO_INTERVALLE:-900}"]
+    depends_on:
+      api: { condition: service_healthy }
+
+  gateway:
+    image: antifragile237/cfao-projets-gateway:${PJ_VERSION:-v0.1.0}
+    restart: unless-stopped
+    logging: *journaux
+    mem_limit: 128m
+    ports:
+      # 127.0.0.1 par defaut : ne l'elargir que derriere un proxy TLS (README, « Exposer en interne »).
+      - "${PJ_BIND:-127.0.0.1}:${PJ_PORT:-8094}:80"
+    depends_on:
+      api: { condition: service_healthy }
+
+volumes:
+  pj-db:
+  pj-donnees:

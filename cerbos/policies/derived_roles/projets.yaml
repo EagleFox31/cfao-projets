@@ -1,0 +1,88 @@
+# Roles derives du gestionnaire de projets.
+# Les roles plateforme (PLATFORM_ROLES.md) donnent le droit d'exister dans
+# l'outil ; le role tenu dans le projet (attribut `roleMembre`, pose par
+# l'API depuis la table des membres) donne le droit d'agir dessus.
+apiVersion: api.cerbos.dev/v1
+derivedRoles:
+  name: projets
+  definitions:
+    # Toute personne identifiee par la plateforme (jamais l'anonyme).
+    - name: connecte
+      parentRoles: ["*"]
+      condition:
+        match:
+          expr: '!("_anon" in request.principal.roles)'
+
+    # Profils qui pilotent des activites : ils ouvrent des projets et voient
+    # ceux de leur perimetre.
+    - name: gestionnaire
+      parentRoles:
+        - build_team
+        - content_editor
+        - group_admin
+        - group_hr
+        - branch_admin
+        - branch_hr
+        - center_director
+        - center_assistant
+        - trainer
+        - team_manager
+        - workshop_manager
+        - dps
+        - dop
+        - branch_director
+        - regional_director
+        - group_director
+
+    # Equipe technique : tout, partout.
+    - name: technique
+      parentRoles: ["superadmin", "build_team"]
+
+    - name: proprietaire
+      parentRoles: ["*"]
+      condition:
+        match:
+          expr: request.resource.attr.ownerId == request.principal.id
+
+    - name: chef_projet
+      parentRoles: ["*"]
+      condition:
+        match:
+          expr: request.resource.attr.roleMembre == "chef"
+
+    - name: contributeur
+      parentRoles: ["*"]
+      condition:
+        match:
+          expr: request.resource.attr.roleMembre in ["chef", "contributeur"]
+
+    - name: membre
+      parentRoles: ["*"]
+      condition:
+        match:
+          expr: request.resource.attr.roleMembre != ""
+
+    # Meme perimetre organisationnel que le projet (filiale, pays...).
+    - name: meme_perimetre
+      parentRoles:
+        - build_team
+        - content_editor
+        - group_admin
+        - group_hr
+        - branch_admin
+        - branch_hr
+        - center_director
+        - center_assistant
+        - trainer
+        - team_manager
+        - workshop_manager
+        - dps
+        - dop
+        - branch_director
+        - regional_director
+        - group_director
+      condition:
+        match:
+          expr: >
+            request.resource.attr.scopeNode != "" &&
+            request.resource.attr.scopeNode in request.principal.attr.scopeNodes

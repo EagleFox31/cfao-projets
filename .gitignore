@@ -1,0 +1,18 @@
+# Gestionnaire de projets : rien de local ni de reel ne part dans le depot.
+
+# Secrets et configuration d'un poste (seul .env.example est versionne)
+.env
+.env.*
+!.env.example
+
+# Donnees reelles propres a un poste (profils, comptes locaux)
+*.local.js
+**/donnees/
+*.sqlite3
+
+# Dependances et builds
+node_modules/
+dist/
+.venv/
+__pycache__/
+.pytest_cache/

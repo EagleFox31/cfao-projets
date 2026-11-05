@@ -1,0 +1,36 @@
+# Ressource « projet ». Default-deny : toute action non listee est refusee.
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: default
+  resource: projet
+  importDerivedRoles: ["projets"]
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
+    resourceSchema:
+      ref: cerbos:///ressource.json
+  rules:
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["gestionnaire", "technique"]
+
+    # Lire : membres, createur, equipe technique, ou gestionnaire du meme perimetre.
+    - actions: ["read"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["membre", "proprietaire", "technique", "meme_perimetre"]
+
+    - actions: ["update", "manage_members"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["chef_projet", "proprietaire", "technique"]
+
+    - actions: ["sync"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["contributeur", "proprietaire", "technique"]
+
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["proprietaire"]
+
+    - actions: ["delete"]
+      effect: EFFECT_ALLOW
+      roles: ["superadmin"]

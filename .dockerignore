@@ -1,0 +1,10 @@
+# Contexte de build de la passerelle (gateway/Dockerfile) : le web seulement.
+api/
+cerbos/
+web/node_modules/
+web/dist/
+**/*.sqlite3
+**/*.local.js
+.env
+**/.env*
+!**/.env.example

@@ -1,0 +1,20 @@
+# Ressource « journal » — journal des erreurs du service.
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: default
+  resource: journal
+  importDerivedRoles: ["projets"]
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
+    resourceSchema:
+      ref: cerbos:///ressource.json
+  rules:
+    # Le portail de toute personne connectee signale ce qu'il a constate.
+    - actions: ["create"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["connecte"]
+
+    - actions: ["*"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["technique"]

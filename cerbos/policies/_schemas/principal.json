@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "scopeNode": { "type": "string" },
+    "scopeNodes": { "type": "array", "items": { "type": "string" } },
+    "brands": { "type": "array", "items": { "type": "string" } },
+    "departments": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["scopeNode"]
+}

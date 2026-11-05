@@ -1,0 +1,20 @@
+# Ressource « personne » : annuaire des intervenants (identites de la plateforme).
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: default
+  resource: personne
+  importDerivedRoles: ["projets"]
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
+    resourceSchema:
+      ref: cerbos:///ressource.json
+  rules:
+    - actions: ["list", "read"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["connecte"]
+
+    # Chacun renseigne son propre identifiant GitHub ; l'equipe technique celui des autres.
+    - actions: ["update"]
+      effect: EFFECT_ALLOW
+      derivedRoles: ["proprietaire", "technique"]
