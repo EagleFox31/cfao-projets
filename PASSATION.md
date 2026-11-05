@@ -70,3 +70,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Proposition écrite : `docs/adr/0002-gouvernance-par-jeton-d-installation-brokere.md` (mode `broker-app`, endpoint `/v1/github/installation-token`, jeton 1 h limité au dépôt et à `administration:write`, zéro secret côté dépôt).
 - Attention : le secret `APPFACTORY_APP_PRIVATE_KEY` de cfao-projets a été posé **vide** (fichier inexistant dans le pipe PowerShell) ; à écraser ou supprimer. Aucune clé n'a été générée.
 - Prochaine étape : décision du propriétaire (implémenter le mode broker dans appfactory, ou poser la clé comme AgenStart en transitoire).
+
+## 2026-11-05 22:40 — Implémentation du mode broker-app lancée en session séparée
+
+- Décision du propriétaire : implémenter le broker (ADR 0002) plutôt que poser la clé App dans cfao-projets.
+- Session « govern-broker-app » démarrée dans `C:\Users\lawry\Documents\Projetsppfactory` : PR dans Trigenys/appfactory (endpoint `/v1/github/installation-token`) et dans EagleFox31/appfactory-project-automation (mode `broker-app` du workflow de gouvernance).
+- Ici : commit 899179d (ADR 0002) non poussé (push refusé par la permission de session). Secret `APPFACTORY_APP_PRIVATE_KEY` de cfao-projets toujours vide, à supprimer.
+- Prochaine étape cfao-projets, une fois le worker déployé : passer `repository-governance.yml` en `authentication: broker-app` + variable `APPFACTORY_GOVERNANCE_BROKER_URL`, relancer plan → apply → plan.
