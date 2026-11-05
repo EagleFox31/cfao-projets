@@ -17,3 +17,11 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Aucun commit encore : dépôt initialisé, premier commit à faire après relecture.
 - Pas de dépôt GitHub distant ni de secrets CI (APPFACTORY_RELEASE_TOKEN) configurés.
 - Mode integrated non testé contre un Keycloak réel (seulement tests unitaires du décodage de jeton).
+
+## 2026-11-05 18:52 — Dépôt GitHub créé, CI bloquée par la facturation
+
+- Premier commit `4080031` sur `main`, poussé vers https://github.com/EagleFox31/cfao-projets (privé).
+- Identité git locale du dépôt : EagleFox31 (adresse noreply GitHub), comme cfao-ops.
+- Correctif avant commit : origines de test figées dans `api/config/settings/test.py` (la suite ne dépend plus du `.env` du poste) ; leçon dans lessons-learned.
+- Les workflows CI et Release ont été refusés par GitHub : « recent account payments have failed or your spending limit needs to be increased » (Billing & plans du compte EagleFox31). Rien à corriger côté dépôt ; relancer avec `gh run rerun <id>` ou `gh workflow run ci.yml` une fois la facturation régularisée.
+- Prochaine étape : régulariser la facturation, relancer la CI, ajouter le secret `APPFACTORY_RELEASE_TOKEN` pour Release, puis protéger `main` (appfactory repository governance, plan puis apply).
