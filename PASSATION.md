@@ -62,3 +62,11 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Le workflow de gouvernance n'accepte que `token` ou `github-app` ; la doc `project-github-app-user-onboarding.md` dit explicitement que le broker OIDC est séparé de la gouvernance (jeton d'installation requis). Le blocage sur `APPFACTORY_APP_PRIVATE_KEY` est donc structurel, pas un choix de cfao-projets.
 - Commande PowerShell (le `<` de bash n'existe pas) : `Get-Content -Raw chemin\cle.pem | gh secret set APPFACTORY_APP_PRIVATE_KEY -R EagleFox31/cfao-projets`.
 - Prochaine étape possible sans secret : brancher le board Projects comme les frères (`project-automation.yml` broker-user + section `project` dans `.github/project-config.json`, variable broker URL copiée d'AgenStart).
+
+## 2026-11-05 22:36 — Gouvernance : ne pas dupliquer la clé App, proposition broker
+
+- Demande : vérifier si l'authentification de gouvernance peut passer par le broker OIDC AppFactory au lieu d'une clé App par dépôt.
+- Constat : broker `appfactory-project-token-broker` = jetons utilisateur OAuth seulement (pas de clé d'App). L'API `appfactory-api` (Trigenys/appfactory) détient déjà la clé (`GITHUB_PRIVATE_KEY`), signe des JWT d'App et émet des jetons d'installation restreints (motif `seo-github-broker`), avec auth OIDC par liste blanche repo+workflow_ref.
+- Proposition écrite : `docs/adr/0002-gouvernance-par-jeton-d-installation-brokere.md` (mode `broker-app`, endpoint `/v1/github/installation-token`, jeton 1 h limité au dépôt et à `administration:write`, zéro secret côté dépôt).
+- Attention : le secret `APPFACTORY_APP_PRIVATE_KEY` de cfao-projets a été posé **vide** (fichier inexistant dans le pipe PowerShell) ; à écraser ou supprimer. Aucune clé n'a été générée.
+- Prochaine étape : décision du propriétaire (implémenter le mode broker dans appfactory, ou poser la clé comme AgenStart en transitoire).
