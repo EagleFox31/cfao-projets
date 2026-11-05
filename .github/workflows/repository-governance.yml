@@ -21,9 +21,7 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: repository-governance-${{ github.repository }}
-  cancel-in-progress: false
+# La serialisation (concurrency) est portee par le workflow reutilisable.
 
 jobs:
   govern:
