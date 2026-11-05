@@ -16,6 +16,9 @@ permissions:
   pull-requests: write
 
 # Release Please via le workflow reutilisable appfactory (tag v1 = SHA 0523510a).
+# Aucun secret : le GITHUB_TOKEN du depot suffit (contents/issues/pull-requests: write).
+# Consequence connue : la PR de release ne declenche pas la CI ; la relancer par
+# workflow_dispatch ou laisser le push de fusion sur main la faire tourner.
 jobs:
   release:
     uses: EagleFox31/appfactory-project-automation/.github/workflows/reusable-release.yml@0523510a8e42290df3bae5749d034b1637569af5
@@ -23,5 +26,3 @@ jobs:
       release-type: simple
       target-branch: main
       release-as: ${{ inputs.release_as }}
-    secrets:
-      release_token: ${{ secrets.APPFACTORY_RELEASE_TOKEN }}

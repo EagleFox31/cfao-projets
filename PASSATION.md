@@ -24,4 +24,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Identité git locale du dépôt : EagleFox31 (adresse noreply GitHub), comme cfao-ops.
 - Correctif avant commit : origines de test figées dans `api/config/settings/test.py` (la suite ne dépend plus du `.env` du poste) ; leçon dans lessons-learned.
 - Les workflows CI et Release ont été refusés par GitHub : « recent account payments have failed or your spending limit needs to be increased » (Billing & plans du compte EagleFox31). Rien à corriger côté dépôt ; relancer avec `gh run rerun <id>` ou `gh workflow run ci.yml` une fois la facturation régularisée.
-- Prochaine étape : régulariser la facturation, relancer la CI, ajouter le secret `APPFACTORY_RELEASE_TOKEN` pour Release, puis protéger `main` (appfactory repository governance, plan puis apply).
+- Prochaine étape : régulariser la facturation, relancer la CI, puis protéger `main` (appfactory repository governance, plan puis apply).
+
+## 2026-11-05 19:01 — Release sans secret PAT
+
+- `release.yml` n'utilise plus `APPFACTORY_RELEASE_TOKEN` : `release_token` est optionnel dans le workflow appfactory, `GITHUB_TOKEN` suffit. Effet : la PR de release ne déclenche pas la CI (relance par `workflow_dispatch`).
+- L'auth OIDC `broker-user` d'appfactory concerne `reusable-project-automation.yml` (board GitHub Project), pas encore adopté ici ; le broker hébergé annonce les dépôts publics du compte, à vérifier pour ce dépôt privé avant adoption.
+- CI toujours bloquée par la facturation du compte GitHub.
