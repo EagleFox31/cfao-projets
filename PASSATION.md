@@ -44,3 +44,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Dépôt passé en public (aucun secret versionné, scan fait) : les minutes Actions ne dépendent plus de la facturation.
 - Premier run réel : api, web, cerbos OK ; job conteneurs corrigé (variables obligatoires du compose de prod fournies à l'étape `config`).
 - Prochaine étape : CI verte sur main, puis gouvernance appfactory (App à installer par le propriétaire, ou broker public si pris en charge pour la gouvernance).
+
+## 2026-11-05 20:40 — Plan de gouvernance : workflow valide, clé App manquante
+
+- Variable `APPFACTORY_APP_CLIENT_ID` posée sur ce dépôt (même App que AgenStart). Le `concurrency` du workflow appelant retiré (porté par le réutilisable) : le run démarre désormais.
+- Le `plan` s'arrête à « Validate governance authentication » : secret `APPFACTORY_APP_PRIVATE_KEY` absent sur cfao-projets (présent sur AgenStart, non lisible). À faire par le propriétaire : installer l'App appfactory sur cfao-projets et copier le secret.
+- Ensuite : relancer `plan` (workflow_dispatch), relire, `apply`, `plan` → NO-OP.
