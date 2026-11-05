@@ -77,3 +77,4 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Session « govern-broker-app » démarrée dans `C:\Users\lawry\Documents\Projetsppfactory` : PR dans Trigenys/appfactory (endpoint `/v1/github/installation-token`) et dans EagleFox31/appfactory-project-automation (mode `broker-app` du workflow de gouvernance).
 - Ici : commit 899179d (ADR 0002) non poussé (push refusé par la permission de session). Secret `APPFACTORY_APP_PRIVATE_KEY` de cfao-projets toujours vide, à supprimer.
 - Prochaine étape cfao-projets, une fois le worker déployé : passer `repository-governance.yml` en `authentication: broker-app` + variable `APPFACTORY_GOVERNANCE_BROKER_URL`, relancer plan → apply → plan.
+- Correction : le dossier de la session est `C:/Users/lawry/Documents/Projets/appfactory` (ligne précédente mal encodée).
