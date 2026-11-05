@@ -31,3 +31,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - `release.yml` n'utilise plus `APPFACTORY_RELEASE_TOKEN` : `release_token` est optionnel dans le workflow appfactory, `GITHUB_TOKEN` suffit. Effet : la PR de release ne déclenche pas la CI (relance par `workflow_dispatch`).
 - L'auth OIDC `broker-user` d'appfactory concerne `reusable-project-automation.yml` (board GitHub Project), pas encore adopté ici ; le broker hébergé annonce les dépôts publics du compte, à vérifier pour ce dépôt privé avant adoption.
 - CI toujours bloquée par la facturation du compte GitHub.
+
+## 2026-11-05 20:17 — Gouvernance du dépôt préparée (plan non lancé)
+
+- CI relancée : toujours refusée par GitHub (facturation Actions du compte). Aucun run n'a encore exécuté un job.
+- Ajout de `.github/project-config.json` (governance solo) et `.github/workflows/repository-governance.yml` (appfactory, auth `github-app`, manuel, épinglé SHA v1). Aucun dépôt du compte n'utilise encore la gouvernance : la voie zéro PAT demande une action unique du propriétaire (enregistrer/installer l'App appfactory, puis variable `APPFACTORY_APP_CLIENT_ID` + secret `APPFACTORY_APP_PRIVATE_KEY` sur ce dépôt). Sans cela, ne pas lancer le workflow.
+- Verrous : facturation GitHub ; identifiants App appfactory.
+- Prochaine étape : une fois débloqué, `plan` → relecture → `apply` → `plan` (NO-OP) ; puis CI verte sur main.

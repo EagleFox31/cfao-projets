@@ -1,0 +1,38 @@
+name: Repository governance
+
+# Protection de la branche par defaut via appfactory (Ruleset gere, zero PAT :
+# GitHub App). Manuel par construction : lancer `plan` (lecture seule), relire,
+# puis `apply` ; un second `plan` doit rendre NO-OP.
+# Prerequis cote proprietaire (une fois) : App appfactory installee sur ce depot,
+# variable APPFACTORY_APP_CLIENT_ID et secret APPFACTORY_APP_PRIVATE_KEY.
+
+on:
+  workflow_dispatch:
+    inputs:
+      governance_mode:
+        description: plan (lecture seule) d'abord ; apply seulement apres relecture du plan.
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - apply
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-governance-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  govern:
+    # tag v1 = SHA 0523510a
+    uses: EagleFox31/appfactory-project-automation/.github/workflows/reusable-repository-governance.yml@0523510a8e42290df3bae5749d034b1637569af5
+    with:
+      governance_mode: ${{ inputs.governance_mode }}
+      config_path: .github/project-config.json
+      authentication: github-app
+      app_client_id: ${{ vars.APPFACTORY_APP_CLIENT_ID }}
+    secrets:
+      app_private_key: ${{ secrets.APPFACTORY_APP_PRIVATE_KEY }}
