@@ -55,3 +55,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - Run plan 42098267663 : échec à « Validate governance authentication », secret `APPFACTORY_APP_PRIVATE_KEY` absent. Un secret Actions n'est pas relisible par API : impossible de le copier depuis AgenStart. L'installation de l'App sur le dépôt n'est pas faisable avec le jeton `gh` (endpoints réservés aux jetons d'App) : action UI du propriétaire (github.com/settings/installations).
 - Commande une fois la clé en main : `gh secret set APPFACTORY_APP_PRIVATE_KEY -R EagleFox31/cfao-projets < chemin/cle.pem`, puis relancer le plan.
+
+## 2026-11-05 22:24 — Tour d'horizon des dépôts qui réutilisent appfactory
+
+- Dépôts consommateurs : AgenStart, agentshield-ai, Trigenys-Insight, atelier2026, agenStudio, xeption237 → `reusable-project-automation.yml` en `authentication: broker-user` (OIDC, variable `APPFACTORY_PROJECT_BROKER_URL`, zéro secret), plus `readme-quality` (Trigenys/appfactory). Seul AgenStart utilise `reusable-repository-governance.yml`, et avec la même clé App (`github-app`).
+- Le workflow de gouvernance n'accepte que `token` ou `github-app` ; la doc `project-github-app-user-onboarding.md` dit explicitement que le broker OIDC est séparé de la gouvernance (jeton d'installation requis). Le blocage sur `APPFACTORY_APP_PRIVATE_KEY` est donc structurel, pas un choix de cfao-projets.
+- Commande PowerShell (le `<` de bash n'existe pas) : `Get-Content -Raw chemin\cle.pem | gh secret set APPFACTORY_APP_PRIVATE_KEY -R EagleFox31/cfao-projets`.
+- Prochaine étape possible sans secret : brancher le board Projects comme les frères (`project-automation.yml` broker-user + section `project` dans `.github/project-config.json`, variable broker URL copiée d'AgenStart).
