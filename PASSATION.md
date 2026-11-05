@@ -38,3 +38,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Ajout de `.github/project-config.json` (governance solo) et `.github/workflows/repository-governance.yml` (appfactory, auth `github-app`, manuel, épinglé SHA v1). Aucun dépôt du compte n'utilise encore la gouvernance : la voie zéro PAT demande une action unique du propriétaire (enregistrer/installer l'App appfactory, puis variable `APPFACTORY_APP_CLIENT_ID` + secret `APPFACTORY_APP_PRIVATE_KEY` sur ce dépôt). Sans cela, ne pas lancer le workflow.
 - Verrous : facturation GitHub ; identifiants App appfactory.
 - Prochaine étape : une fois débloqué, `plan` → relecture → `apply` → `plan` (NO-OP) ; puis CI verte sur main.
+
+## 2026-11-05 20:24 — Dépôt public, CI exécutée
+
+- Dépôt passé en public (aucun secret versionné, scan fait) : les minutes Actions ne dépendent plus de la facturation.
+- Premier run réel : api, web, cerbos OK ; job conteneurs corrigé (variables obligatoires du compose de prod fournies à l'étape `config`).
+- Prochaine étape : CI verte sur main, puis gouvernance appfactory (App à installer par le propriétaire, ou broker public si pris en charge pour la gouvernance).

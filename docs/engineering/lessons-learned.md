@@ -53,3 +53,16 @@ exige un contrôle plus fort (test, garde-fou, règle CI).
   job `conteneurs` en crée un seulement pour `compose config`.
 - **Leçon** : tout réglage que lit un test est fixé dans les réglages de test,
   jamais hérité d'un fichier local. Le module de référence a la même fragilité.
+
+## 2026-11-05 — Compose de prod validé localement seulement par le script de déploiement
+
+- **Contexte** : premier run CI public : `docker compose -f docker-compose.prod.yml config`
+  échoue (`ALLOWED_HOSTS` obligatoire) alors que `deploy.sh` passe, car c'est le script
+  qui dérive/génère ces variables avant d'appeler compose.
+- **Cause racine** : la vérification locale « avant terminé » ne couvre que le compose de
+  dev ; le compose de prod n'a été exercé qu'à travers `deploy.sh`.
+- **Résolution** : l'étape CI fournit les variables obligatoires avec des valeurs factices,
+  comme le ferait le script.
+- **Prévention vérifiable** : job `conteneurs` de la CI ; ajouter la même commande à la
+  checklist locale quand `docker-compose.prod.yml` change.
+- **Leçon** : chaque commande de CI doit être rejouée telle quelle en local avant le premier push.

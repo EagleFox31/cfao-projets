@@ -80,6 +80,14 @@ jobs:
       - uses: actions/checkout@v4
       - run: cp .env.example .env
       - run: docker compose config -q
+      # Le compose de prod exige les variables que deploy.sh derive ou genere :
+      # on fournit des valeurs factices, uniquement pour valider le fichier.
       - run: docker compose -f docker-compose.prod.yml --env-file env.prod.example config -q
+        env:
+          SECRET_KEY: ci-validation-seulement
+          POSTGRES_PASSWORD: ci-validation-seulement
+          ALLOWED_HOSTS: projets.example,localhost,127.0.0.1
+          ORIGINES_AUTORISEES: https://projets.example
+          COOKIE_SECURE: "True"
       - run: docker build -q -t cfao-projets-api:ci api
       - run: docker build -q -t cfao-projets-gateway:ci -f gateway/Dockerfile .
