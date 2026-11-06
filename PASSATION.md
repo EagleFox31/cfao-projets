@@ -96,3 +96,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 ## 2026-11-06 13:39 — Mot de passe en standalone
 
 - Le formulaire exige un champ non vide mais le serveur ne le vérifie pas en standalone : n'importe quelle valeur (ex. `demo`) passe.
+
+## 2026-11-06 13:46 — Comptes CFAO et en-têtes de sections de l'accueil
+
+- `api/profils-locaux.json` : 4 comptes ajoutés (identifiant = adresse e-mail) : jakaa-ext@cfao.com et ibmbowou-ext@cfao.com (Ibrahim Mbowou, dev) en `build_team`, aybokally@cfao.com (coordinateur) en `team_manager`, lgonin@cfao.com (directeur du centre) en `center_director`. Périmètre `CMR` / toyota / motors supposé, prénoms inconnus mis en initiale : à corriger si besoin. Les profils sont cuits dans l'image api : `docker compose up -d --build api` après modification (fait, 4 connexions → 200).
+- Accueil : nouveau composant `web/src/components/portail/SectionHead.jsx` (icône SVG + eyebrow + titre, piloté par la config `SECTIONS` d'`Accueil.jsx`, plus de libellés en dur) ; la section Avancement est désormais dans une carte `pj-panneau` comme la section GitHub. CSS : eyebrow en inline-flex avec icône (`pj.css`). Build web et gateway reconstruits, vitest 12/12.
+- Reste : nouvelles icônes à ajouter dans `ICONES` de SectionHead si d'autres pages adoptent le composant (Projet.jsx, Projets.jsx ont encore leurs titres en dur).

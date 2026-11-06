@@ -254,3 +254,7 @@
 .pj-liens { display: flex; gap: 8px; flex-wrap: wrap; }
 .pj-lien-depot { font-size: 13px; color: var(--navy-2); text-decoration: none; border-bottom: 1px dotted currentColor; }
 .pj-lien-depot:hover { color: var(--red); }
+
+/* En-tête de section : icône alignée sur le sur-titre. */
+.portal-section-eyebrow { display: inline-flex; align-items: center; gap: 6px; }
+.portal-section-icon { flex: none; }

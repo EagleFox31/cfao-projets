@@ -88,5 +88,81 @@
     "brands": [],
     "departments": [],
     "email": "admin.demo@example.invalid"
+  },
+  {
+    "identifiant": "jakaa-ext@cfao.com",
+    "id": "jakaa-ext",
+    "roles": [
+      "build_team"
+    ],
+    "firstName": "J.",
+    "lastName": "Akaa",
+    "email": "jakaa-ext@cfao.com",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ]
+  },
+  {
+    "identifiant": "ibmbowou-ext@cfao.com",
+    "id": "ibmbowou-ext",
+    "roles": [
+      "build_team"
+    ],
+    "firstName": "Ibrahim",
+    "lastName": "Mbowou",
+    "email": "ibmbowou-ext@cfao.com",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ]
+  },
+  {
+    "identifiant": "aybokally@cfao.com",
+    "id": "aybokally",
+    "roles": [
+      "team_manager"
+    ],
+    "firstName": "A.",
+    "lastName": "Ybokally",
+    "email": "aybokally@cfao.com",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ]
+  },
+  {
+    "identifiant": "lgonin@cfao.com",
+    "id": "lgonin",
+    "roles": [
+      "center_director"
+    ],
+    "firstName": "L.",
+    "lastName": "Gonin",
+    "email": "lgonin@cfao.com",
+    "scopeNodes": [
+      "CMR"
+    ],
+    "brands": [
+      "toyota"
+    ],
+    "departments": [
+      "motors"
+    ]
   }
 ]

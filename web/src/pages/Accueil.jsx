@@ -7,6 +7,7 @@ import PortalHeader from '../components/portail/PortalHeader'
 import PortalReveal from '../components/portail/PortalReveal'
 import PortalStaggerGrid from '../components/portail/PortalStaggerGrid'
 import PvCard from '../components/portail/PvCard'
+import SectionHead from '../components/portail/SectionHead'
 import ActiviteSemaine from '../components/projet/ActiviteSemaine'
 import { Jauge, Statut, dico } from '../components/PageModule'
 import useEnHautDePage from '../hooks/useEnHautDePage'
@@ -23,6 +24,12 @@ const VISUELS = {
   propositions: '/assets/img_cards/certification.jpg',
   activite: '/assets/img_cards/techniciens-carte.jpg',
   equipe: '/assets/img_cards/test_theorie_senior.jpg',
+}
+
+/** Sections de l'accueil : icône, sur-titre et titre viennent d'ici, pas du JSX. */
+const SECTIONS = {
+  projets: { icone: 'avancement', eyebrow: 'Avancement', titre: 'Projets en cours' },
+  activite: { icone: 'github', eyebrow: 'GitHub', titre: 'Le travail de la semaine, par personne' },
 }
 
 const LIBELLES_ROLE = [
@@ -113,42 +120,38 @@ export default function Accueil() {
 
         <PortalReveal className="portal-section pj-accueil-section" id="projets">
           <div className="container">
-            <div className="portal-section-head">
-              <p className="portal-section-eyebrow">Avancement</p>
-              <h2 className="portal-section-title">Projets en cours</h2>
-            </div>
-            {liste.erreur && <div className="pj-erreur">{liste.erreur.message}</div>}
-            {!liste.chargement && enCours.length === 0 && (
-              <div className="pj-vide">
-                Aucun projet en cours. {referentiel?.peut_creer_projet ? <Link to="/projets">Créer le premier.</Link> : 'Vous serez ajouté par un chef de projet.'}
+            <SectionHead section={SECTIONS.projets} />
+            <div className="pj-panneau">
+              {liste.erreur && <div className="pj-erreur">{liste.erreur.message}</div>}
+              {!liste.chargement && enCours.length === 0 && (
+                <div className="pj-vide">
+                  Aucun projet en cours. {referentiel?.peut_creer_projet ? <Link to="/projets">Créer le premier.</Link> : 'Vous serez ajouté par un chef de projet.'}
+                </div>
+              )}
+              <div className="pj-grille">
+                {enCours.map(p => (
+                  <Link key={p.id} to={`/projets/${p.id}`} className="pj-carte-projet">
+                    <div className="pj-carte-avancement">
+                      <strong>{p.nom}</strong>
+                      <Statut code={p.statut} libelles={statuts} />
+                    </div>
+                    <Jauge valeur={p.avancement} />
+                    <div className="pj-note">
+                      {p.nb_membres} membre{p.nb_membres > 1 ? 's' : ''}
+                      {' · '}{p.taches_par_statut?.fait ?? 0}/{Object.values(p.taches_par_statut || {}).reduce((a, b) => a + b, 0)} tâches faites
+                      {p.propositions_en_attente ? ` · ${p.propositions_en_attente} proposition${p.propositions_en_attente > 1 ? 's' : ''} en attente` : ''}
+                      {p.date_fin ? ` · échéance ${new Date(p.date_fin).toLocaleDateString('fr-FR')}` : ''}
+                    </div>
+                  </Link>
+                ))}
               </div>
-            )}
-            <div className="pj-grille">
-              {enCours.map(p => (
-                <Link key={p.id} to={`/projets/${p.id}`} className="pj-carte-projet">
-                  <div className="pj-carte-avancement">
-                    <strong>{p.nom}</strong>
-                    <Statut code={p.statut} libelles={statuts} />
-                  </div>
-                  <Jauge valeur={p.avancement} />
-                  <div className="pj-note">
-                    {p.nb_membres} membre{p.nb_membres > 1 ? 's' : ''}
-                    {' · '}{p.taches_par_statut?.fait ?? 0}/{Object.values(p.taches_par_statut || {}).reduce((a, b) => a + b, 0)} tâches faites
-                    {p.propositions_en_attente ? ` · ${p.propositions_en_attente} proposition${p.propositions_en_attente > 1 ? 's' : ''} en attente` : ''}
-                    {p.date_fin ? ` · échéance ${new Date(p.date_fin).toLocaleDateString('fr-FR')}` : ''}
-                  </div>
-                </Link>
-              ))}
             </div>
           </div>
         </PortalReveal>
 
         <PortalReveal className="portal-section pj-accueil-section" id="activite">
           <div className="container">
-            <div className="portal-section-head">
-              <p className="portal-section-eyebrow">GitHub</p>
-              <h2 className="portal-section-title">Le travail de la semaine, par personne</h2>
-            </div>
+            <SectionHead section={SECTIONS.activite} />
             <div className="pj-panneau">
               <ActiviteSemaine semaineInitiale={semaine} />
             </div>
