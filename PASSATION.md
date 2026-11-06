@@ -78,3 +78,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Ici : commit 899179d (ADR 0002) non poussé (push refusé par la permission de session). Secret `APPFACTORY_APP_PRIVATE_KEY` de cfao-projets toujours vide, à supprimer.
 - Prochaine étape cfao-projets, une fois le worker déployé : passer `repository-governance.yml` en `authentication: broker-app` + variable `APPFACTORY_GOVERNANCE_BROKER_URL`, relancer plan → apply → plan.
 - Correction : le dossier de la session est `C:/Users/lawry/Documents/Projets/appfactory` (ligne précédente mal encodée).
+
+## 2026-11-06 13:29 — Session broker terminée (PR ouvertes), question « où est mon App »
+
+- Session govern-broker-app : PR #144 (Trigenys/appfactory, endpoint jeton d'installation) et PR #188 (appfactory-project-automation, mode broker-app). Reste au propriétaire : déploiement du worker, allowlists, variable broker côté dépôt.
+- Apps GitHub : `appfactory-bot` (org Trigenys, App ID 4935200, client Iv23lisXtkmMFl0u3hs5, administration:write, installée sur l'org) ≠ App de gouvernance d'AgenStart (client Iv23liGQ16lZLLIu0As1, propriétaire et slug non visibles par API : à retrouver dans github.com/settings/apps ou organizations/Trigenys/settings/apps). Point ouvert : quelle App porte la clé `GITHUB_PRIVATE_KEY` du worker (variable `GITHUB_APP_ID` dans Cloudflare).
+- Application cfao-projets : dépôt https://github.com/EagleFox31/cfao-projets, local `make up` → http://localhost:8094.
