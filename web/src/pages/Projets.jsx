@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import PageModule, { Jauge, Statut, dateCourte, dico } from '../components/PageModule'
+import { useNavigate } from 'react-router-dom'
+import PageModule, { dico } from '../components/PageModule'
+import PortalStaggerGrid from '../components/portail/PortalStaggerGrid'
+import CarteProjet from '../components/projet/CarteProjet'
 import { Dialogue } from '../components/projet/Propositions'
 import FormulaireProjet from '../components/projet/FormulaireProjet'
 import { projets } from '../lib/api'
@@ -15,7 +17,6 @@ export default function Projets() {
   const { donnees, erreur, chargement } = useRequete(() => projets.liste(statut || undefined), [statut])
   const liste = donnees?.projets || []
   const statuts = dico(referentiel?.statuts_projet)
-  const roles = dico(referentiel?.roles_membre)
 
   const parStatut = useMemo(() => {
     const c = {}
@@ -50,32 +51,9 @@ export default function Projets() {
       )}
 
       {liste.length > 0 && (
-        <div className="pj-panneau pj-tableau-defilant">
-          <table className="pj-tableau">
-            <thead>
-              <tr>
-                <th>Projet</th><th>Statut</th><th style={{ minWidth: 160 }}>Avancement</th>
-                <th className="num">Membres</th><th>Mon rôle</th><th>Échéance</th><th className="num">Propositions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {liste.map(p => (
-                <tr key={p.id} onClick={() => navigate(`/projets/${p.id}`)} style={{ cursor: 'pointer' }}>
-                  <td>
-                    <Link to={`/projets/${p.id}`} onClick={e => e.stopPropagation()}><strong>{p.nom}</strong></Link>
-                    {p.description && <div className="pj-note" style={{ maxWidth: 420, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.description}</div>}
-                  </td>
-                  <td><Statut code={p.statut} libelles={statuts} /></td>
-                  <td><Jauge valeur={p.avancement} /></td>
-                  <td className="num">{p.nb_membres}</td>
-                  <td>{p.mon_role ? (roles[p.mon_role] || p.mon_role) : <span className="pj-note">—</span>}</td>
-                  <td>{dateCourte(p.date_fin)}</td>
-                  <td className="num">{p.propositions_en_attente || ''}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <PortalStaggerGrid>
+          {liste.map(p => <CarteProjet key={p.id} projet={p} statuts={statuts} />)}
+        </PortalStaggerGrid>
       )}
 
       {creation && (

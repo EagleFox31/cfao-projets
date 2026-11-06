@@ -140,3 +140,14 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
   étaient lus ; une synchro depuis le shell l'a renseigné et les suivantes (bouton, service) l'affichent. Non reproduit.
 - Prochaine étape côté usage : créer un projet par module cfaoacademy et rattacher `EagleFox31/cfaoacademy` avec le
   sous-dossier (ex. `cfao-comptes-rendus`), puis `cfao-ops`.
+
+## 2026-11-06 17:16 — Projets CFAO créés avec leurs dépôts, liste Projets en cartes
+
+- Projets créés en base (idempotent, `cree_par` = admin.demo, admin membre `chef`), chacun avec son dépôt rattaché et synchronisé :
+  CFAO Comptes rendus (`cfaoacademy/cfao-comptes-rendus`, 60 commits), CFAO Mail (`cfao-academy-mail`, 4), CFAO Core (`cfao-core`, 5),
+  CFAO Needs (`cfao-needs`, 29), CFAO Operations (`cfao-operations`, 0), Portail CFAO Academy (`frontend`, 127), CFAO Ops (`EagleFox31/cfao-ops`, 2).
+  Pas de module « planning » dans cfaoacademy. Avec MEDACAP84 : 8 projets.
+- Page `/projets` : le tableau est remplacé par la grille de cartes du portail (`PortalStaggerGrid` + `PvCard`), partagée avec l'accueil
+  via `web/src/components/projet/CarteProjet.jsx` (statut en kicker, note membres/tâches/propositions/échéance, jauge d'avancement).
+  Filtres par statut, états vide/erreur et dialogue de création inchangés. Vitest 12/12, build OK, gateway reconstruit, vérifié sur 8094.
+- Commits locaux non poussés : 1222548 (zébrage) + celui-ci.
