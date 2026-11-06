@@ -163,3 +163,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Contributeurs « non rattaché » : aucune personne du module ne porte les logins EagleFox31 / MbowouIbrah (mode autonome,
   seul admin.demo existe). Se résout avec les identités plateforme ou le login GitHub sur la fiche personne.
 - Dépôts CFAO non suivis repérés : `cfao-suivi-commerciaux-pr-vl`, `planificateur` (privé) ; en attente de décision.
+
+## 2026-11-06 17:34 — Projet Suivi commerciaux créé
+
+- Projet 9 « CFAO Suivi commerciaux PR et VL » créé (admin.demo chef), dépôt `EagleFox31/cfao-suivi-commerciaux-pr-vl`
+  rattaché en toutes branches, synchro OK (2 commits, `main`). 9 projets au total.
+- `planificateur` écarté : application de planning de réunions pour une congrégation, sans lien avec CFAO.
+- État : 3 commits locaux non poussés sur main (1222548, 8f36629, def5d6b). Prochaine étape : push sur accord.
