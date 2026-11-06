@@ -106,3 +106,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 ## 2026-11-06 13:53 — Projets en cours rendus en PvCard
 
 - Accueil : chaque projet en cours est une `PvCard` (image, statut en kicker, titre, synthèse `noteProjet`, jauge en enfant, CTA « Ouvrir le projet ») dans un `PortalStaggerGrid`, comme les cartes du haut ; plus de `pj-panneau` ni de `Link` maison. `PvCard` accepte désormais `children` (rendu après `meta`). Vérifié dans le navigateur sur http://localhost:8094, vitest 12/12, build OK, gateway reconstruit.
+
+## 2026-11-06 13:58 — Liaison GitHub : état des lieux
+
+- Un projet suit des dépôts via Projet → Paramètres → « organisation/depot » (+ nom de variable de jeton, optionnel, défaut `GITHUB_TOKEN`, vide dans `.env`). La synchro lit `/repos/{owner}/{repo}/commits` du dépôt entier : **pas de filtre par sous-dossier**.
+- Dépôts vus côté EagleFox31 : `cfaoacademy` (public, monorepo : cfao-academy-mail, cfao-comptes-rendus, cfao-core, cfao-needs, cfao-operations, frontend, gateway, keycloak…, pas de dossier planning), `cfao-ops` (privé, jeton requis), `cfao-projets`, `cfao-suivi-commerciaux-pr-vl`, `academy` (privé).
+- Prochaine étape probable : ajouter un champ `chemin` (sous-dossier) sur Depot + filtre `path` sur l'appel commits et attribution des fichiers, pour un projet par module du monorepo.
