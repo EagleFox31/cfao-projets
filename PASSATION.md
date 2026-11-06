@@ -128,3 +128,15 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - `web/src/pages/Projet.jsx` utilise `FicheDetail` (statut en étiquette, pastilles membres / rôle / jauge, description en chapeau).
   Les états erreur / chargement restent sur `PageModule`.
 - Vérifié : vitest 12/12, `npm run build`, gateway reconstruit, croix testée dans le navigateur (`/projets/1` → `/projets`).
+
+## 2026-11-06 17:05 — Dépôt MEDACAP2026 rattaché, zébrage portail neutralisé
+
+- Projet 1 (MEDACAP84) : dépôt `EagleFox31/MEDACAP2026` rattaché via l'UI, synchro OK (102 commits lus, branche `main`).
+  Aucun dépôt n'était lié : le jeton donne l'accès, chaque projet déclare ses dépôts dans Paramètres.
+- Bug d'affichage : le thème portail applique `section:nth-of-type(2n)` (fond sombre + h2 blanc) à toute 2e section ;
+  la 2e `pj-panneau` d'un onglet devenait illisible. Neutralisé en fin de `pj.css` (fond paper, titres ink) pour `.pj-page`
+  et `.pj-fiche-page`, comme le portail le fait pour `.article-sheet section`.
+- À surveiller : après la première synchro via le bouton, `derniere_synchro` est resté nul en base alors que les commits
+  étaient lus ; une synchro depuis le shell l'a renseigné et les suivantes (bouton, service) l'affichent. Non reproduit.
+- Prochaine étape côté usage : créer un projet par module cfaoacademy et rattacher `EagleFox31/cfaoacademy` avec le
+  sous-dossier (ex. `cfao-comptes-rendus`), puis `cfao-ops`.

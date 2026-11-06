@@ -302,3 +302,11 @@
   .pj-fiche-corps { padding: 0 20px 28px; }
   .pj-fiche-corps .pj-onglets { margin: 0 -20px 20px; padding: 0 20px; }
 }
+
+/* Le thème portail grise une section sur deux (`section:nth-of-type(2n)`) : neutralisé dans le module. */
+.pj-page section:nth-of-type(n):not(.has-section-bg),
+.pj-fiche-page section:nth-of-type(n):not(.has-section-bg) { background: transparent; padding: 0; }
+.pj-page section.pj-panneau:nth-of-type(n),
+.pj-fiche-page section.pj-panneau:nth-of-type(n) { background: var(--paper); padding: 20px 22px; }
+.pj-page section:nth-of-type(n) h2, .pj-page section:nth-of-type(n) h3,
+.pj-fiche-page section:nth-of-type(n) h2, .pj-fiche-page section:nth-of-type(n) h3 { color: var(--ink); }
