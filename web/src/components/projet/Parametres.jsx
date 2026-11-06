@@ -9,19 +9,23 @@ import { Dialogue, FormulaireProposition } from './Propositions'
 function AjoutDepot({ projet, onFait, onAnnuler }) {
   const [depot, setDepot] = useState('')
   const [jeton, setJeton] = useState('')
+  const [chemin, setChemin] = useState('')
   const [toutes, setToutes] = useState(false)
   const { enCours, erreur, lancer } = useAction()
   const valide = /^[\w.-]+\/[\w.-]+$/.test(depot.trim())
 
   function envoyer(e) {
     e.preventDefault()
-    lancer(projets.ajouterDepot(projet.id, { depot: depot.trim(), jeton_variable: jeton.trim() || null, toutes_branches: toutes }), onFait)
+    lancer(projets.ajouterDepot(projet.id, { depot: depot.trim(), jeton_variable: jeton.trim() || null, toutes_branches: toutes, chemin: chemin.trim().replace(/^\/+|\/+$/g, '') || '' }), onFait)
   }
 
   return (
     <form className="pj-formulaire" onSubmit={envoyer}>
       <label className="pj-champ pj-champ--large"><span>Dépôt GitHub (owner/nom) *</span>
         <input value={depot} onChange={e => setDepot(e.target.value)} placeholder="organisation/depot" required autoFocus />
+      </label>
+      <label className="pj-champ"><span>Sous-dossier suivi (monorepo)</span>
+        <input value={chemin} onChange={e => setChemin(e.target.value)} placeholder="ex. cfao-comptes-rendus (vide = tout le dépôt)" />
       </label>
       <label className="pj-champ"><span>Variable d’environnement du jeton</span>
         <input value={jeton} onChange={e => setJeton(e.target.value)} placeholder="GITHUB_TOKEN (défaut)" />
@@ -92,7 +96,7 @@ export default function Parametres({ projet, referentiel, onChange }) {
               <tbody>
                 {projet.depots.map(dep => (
                   <tr key={dep.id}>
-                    <td><a className="pj-mono" href={dep.url} target="_blank" rel="noreferrer">{dep.depot}</a>
+                    <td><a className="pj-mono" href={dep.url} target="_blank" rel="noreferrer">{dep.libelle || dep.depot}</a>
                       <div className="pj-note">jeton : {dep.jeton_variable || 'GITHUB_TOKEN'}</div></td>
                     <td>{dep.toutes_branches ? 'toutes' : (dep.branche_par_defaut || 'par défaut')}</td>
                     <td className="num">{dep.commits}</td>

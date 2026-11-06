@@ -154,6 +154,9 @@ class Depot(models.Model):
     # Decouverte a la premiere synchronisation (jamais supposee « main »).
     branche_par_defaut = models.CharField(max_length=120, blank=True)
     toutes_branches = models.BooleanField(default=False)
+    # Sous-dossier suivi dans un monorepo (vide = tout le depot) : seuls les
+    # commits qui touchent ce chemin sont lus, et leurs stats s'y limitent.
+    chemin = models.CharField(max_length=200, blank=True)
     # Nom d'une variable d'environnement portant un jeton propre a ce depot,
     # jamais le jeton lui-meme.
     jeton_variable = models.CharField(max_length=80, blank=True)
@@ -162,13 +165,23 @@ class Depot(models.Model):
     ajoute_le = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=("projet", "proprietaire", "nom"),
+        constraints = [models.UniqueConstraint(fields=("projet", "proprietaire", "nom", "chemin"),
                                                name="depot_unique_par_projet")]
-        ordering = ("proprietaire", "nom")
+        ordering = ("proprietaire", "nom", "chemin")
 
     @property
     def plein_nom(self):
         return f"{self.proprietaire}/{self.nom}"
+
+    @property
+    def libelle(self):
+        return f"{self.plein_nom}/{self.chemin}" if self.chemin else self.plein_nom
+
+    def fichier_suivi(self, chemin_fichier):
+        """Le fichier est-il sous le sous-dossier suivi (toujours vrai sans filtre) ?"""
+        if not self.chemin:
+            return True
+        return chemin_fichier == self.chemin or chemin_fichier.startswith(self.chemin + "/")
 
     def __str__(self):
         return self.plein_nom

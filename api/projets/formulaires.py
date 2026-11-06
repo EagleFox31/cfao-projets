@@ -138,8 +138,11 @@ def depot(corps):
     jeton_variable = _texte(corps.get("jeton_variable"), "jeton_variable", 80) or ""
     if jeton_variable and not all(c.isalnum() or c == "_" for c in jeton_variable):
         raise Invalide("jeton_variable : nom de variable d'environnement attendu")
+    chemin = (_texte(corps.get("chemin"), "chemin", 200) or "").strip("/")
+    if chemin and (".." in chemin.split("/") or any(c.isspace() or c == "\\" for c in chemin)):
+        raise Invalide("chemin : sous-dossier du dépôt attendu (ex. apps/mail)")
     return {"proprietaire": proprietaire, "nom": nom, "jeton_variable": jeton_variable,
-            "toutes_branches": bool(corps.get("toutes_branches", False))}
+            "toutes_branches": bool(corps.get("toutes_branches", False)), "chemin": chemin}
 
 
 def proposition(corps):

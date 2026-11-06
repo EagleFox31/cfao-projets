@@ -121,3 +121,30 @@ def test_un_depot_mal_forme_est_refuse(client, projet):
     r = client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/portail", "jeton_variable": "pas valide"},
                       format="json")
     assert r.status_code == 400
+
+
+def test_un_sous_dossier_filtre_les_commits_et_leurs_stats(client, projet, faux_github):
+    """Monorepo : seuls les fichiers sous `chemin` comptent ; un commit hors dossier est ignore."""
+    r = client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/mono", "chemin": "/apps/mail/"}, format="json")
+    assert r.status_code == 201, r.content
+    depot = r.json()
+    assert depot["chemin"] == "apps/mail" and depot["libelle"] == "cfao/mono/apps/mail"
+    # Le meme depot sans filtre reste un autre suivi du meme projet.
+    assert client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/mono"}, format="json").status_code == 201
+    dedans = _brut("a" * 40, "formateur-demo", "2026-11-03T10:00:00Z", 30, 3)
+    dedans["files"] = [{"filename": "apps/mail/x.py", "additions": 20, "deletions": 1},
+                       {"filename": "apps/web/y.py", "additions": 10, "deletions": 2}]
+    dehors = _brut("b" * 40, "formateur-demo", "2026-11-04T09:00:00Z")
+    dehors["files"] = [{"filename": "apps/web/z.py", "additions": 10, "deletions": 2}]
+    faux_github.reponses["/repos/cfao/mono/commits"] = [dedans, dehors]
+    faux_github.reponses["/repos/cfao/mono"] = {"default_branch": "main"}
+    r = client().post(f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser")
+    assert r.status_code == 200, r.content
+    assert r.json()["nouveaux"] == 1
+    params = [p for c, p in faux_github.appels if c.endswith("/commits")][0]
+    assert params["path"] == "apps/mail"
+    commit = Commit.objects.get(sha="a" * 40)
+    assert (commit.additions, commit.deletions, commit.fichiers) == (20, 1, 1)
+    for chemin in ("a/../b", "a b"):
+        assert client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/mono", "chemin": chemin},
+                             format="json").status_code == 400

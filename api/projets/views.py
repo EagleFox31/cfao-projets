@@ -115,11 +115,12 @@ def ser_tache(t):
 
 
 def ser_depot(d):
-    return {"id": d.id, "depot": d.plein_nom, "branche_par_defaut": d.branche_par_defaut,
+    return {"id": d.id, "depot": d.plein_nom, "chemin": d.chemin, "libelle": d.libelle,
+            "branche_par_defaut": d.branche_par_defaut,
             "toutes_branches": d.toutes_branches, "jeton_variable": d.jeton_variable,
             "derniere_synchro": d.derniere_synchro.isoformat() if d.derniere_synchro else None,
             "derniere_erreur": d.derniere_erreur, "commits": d.commits.count(),
-            "url": f"https://github.com/{d.plein_nom}"}
+            "url": f"https://github.com/{d.plein_nom}" + (f"/tree/{d.branche_par_defaut or 'HEAD'}/{d.chemin}" if d.chemin else "")}
 
 
 def ser_proposition(p):
@@ -483,7 +484,7 @@ class Depots(APIView):
         except formulaires.Invalide as exc:
             return _erreur(str(exc), 400)
         depot, cree = Depot.objects.get_or_create(
-            projet=projet, proprietaire=champs["proprietaire"], nom=champs["nom"],
+            projet=projet, proprietaire=champs["proprietaire"], nom=champs["nom"], chemin=champs["chemin"],
             defaults={k: champs[k] for k in ("jeton_variable", "toutes_branches")})
         return Response(ser_depot(depot), status=201 if cree else 200)
 

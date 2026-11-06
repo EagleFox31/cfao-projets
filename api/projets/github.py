@@ -85,6 +85,8 @@ def branches(depot):
 
 def commits_depuis(depot, branche, depuis):
     params = {"sha": branche, "per_page": PAR_PAGE}
+    if depot.chemin:
+        params["path"] = depot.chemin
     if depuis:
         params["since"] = depuis.astimezone(tz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return _pages(depot, f"/repos/{depot.proprietaire}/{depot.nom}/commits", params)
@@ -114,8 +116,14 @@ def enregistrer_commit(depot, brut, branche=""):
     git = (detail.get("commit") or {}).get("author") or {}
     login = auteur.get("login") or ""
     email = git.get("email") or ""
-    stats = detail.get("stats") or {}
-    fichiers = detail.get("files") or []
+    fichiers = [f for f in detail.get("files") or [] if depot.fichier_suivi(f.get("filename", ""))]
+    if depot.chemin:
+        if not fichiers:
+            return False   # commit hors du sous-dossier suivi (webhook ou liste non filtree)
+        stats = {"additions": sum(f.get("additions", 0) or 0 for f in fichiers),
+                 "deletions": sum(f.get("deletions", 0) or 0 for f in fichiers)}
+    else:
+        stats = detail.get("stats") or {}
     quand = git.get("date")
     try:
         date_commit = datetime.fromisoformat(quand.replace("Z", "+00:00")) if quand else timezone.now()
