@@ -88,3 +88,7 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 ## 2026-11-06 13:31 — Connexion locale
 
 - Mode standalone (.env) : identifiants de `api/profils-locaux.json` (f-demo trainer, ki-demo learner+ki, a-demo learner, c-demo team_manager, s-demo superadmin), aucun mot de passe. Accès http://localhost:8094.
+
+## 2026-11-06 13:32 — Connexion locale (correctif)
+
+- Identifiants de connexion = champ `identifiant` de `api/profils-locaux.json` (admin.demo, chef.demo, formateur.demo, ki.demo, apprenant.demo), mot de passe quelconque en standalone. L'entrée précédente citait les `id` internes par erreur.
