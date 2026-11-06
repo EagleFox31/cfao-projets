@@ -151,3 +151,15 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
   via `web/src/components/projet/CarteProjet.jsx` (statut en kicker, note membres/tâches/propositions/échéance, jauge d'avancement).
   Filtres par statut, états vide/erreur et dialogue de création inchangés. Vitest 12/12, build OK, gateway reconstruit, vérifié sur 8094.
 - Commits locaux non poussés : 1222548 (zébrage) + celui-ci.
+
+## 2026-11-06 17:28 — Lecture de toutes les branches des dépôts
+
+- Constat : les 8 dépôts étaient rattachés mais lus sur `main` seulement ; le travail de la semaine est sur des branches
+  de fonctionnalité (cfaoacademy : `feature/04-5-rapports-formateur`, `feature/15-1-cerbos-pdp-unique`), d'où « 0 commit ».
+- Données : `toutes_branches` activé sur les 8 dépôts, `derniere_synchro` remise à nul pour relire la fenêtre initiale (90 j),
+  resynchro : +59 commits (Comptes rendus 60 → 97). Semaine 45 de Comptes rendus : 5 commits, 2 contributeurs.
+- Piège : activer « toutes branches » après coup ne rattrape rien, la synchro repart de `derniere_synchro - 1 h`.
+  Le drapeau n'est réglable qu'à la création ; le formulaire coche désormais « toutes les branches » par défaut.
+- Contributeurs « non rattaché » : aucune personne du module ne porte les logins EagleFox31 / MbowouIbrah (mode autonome,
+  seul admin.demo existe). Se résout avec les identités plateforme ou le login GitHub sur la fiche personne.
+- Dépôts CFAO non suivis repérés : `cfao-suivi-commerciaux-pr-vl`, `planificateur` (privé) ; en attente de décision.

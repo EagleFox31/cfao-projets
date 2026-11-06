@@ -10,7 +10,7 @@ function AjoutDepot({ projet, onFait, onAnnuler }) {
   const [depot, setDepot] = useState('')
   const [jeton, setJeton] = useState('')
   const [chemin, setChemin] = useState('')
-  const [toutes, setToutes] = useState(false)
+  const [toutes, setToutes] = useState(true)
   const { enCours, erreur, lancer } = useAction()
   const valide = /^[\w.-]+\/[\w.-]+$/.test(depot.trim())
 
