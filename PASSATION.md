@@ -112,3 +112,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Un projet suit des dépôts via Projet → Paramètres → « organisation/depot » (+ nom de variable de jeton, optionnel, défaut `GITHUB_TOKEN`, vide dans `.env`). La synchro lit `/repos/{owner}/{repo}/commits` du dépôt entier : **pas de filtre par sous-dossier**.
 - Dépôts vus côté EagleFox31 : `cfaoacademy` (public, monorepo : cfao-academy-mail, cfao-comptes-rendus, cfao-core, cfao-needs, cfao-operations, frontend, gateway, keycloak…, pas de dossier planning), `cfao-ops` (privé, jeton requis), `cfao-projets`, `cfao-suivi-commerciaux-pr-vl`, `academy` (privé).
 - Prochaine étape probable : ajouter un champ `chemin` (sous-dossier) sur Depot + filtre `path` sur l'appel commits et attribution des fichiers, pour un projet par module du monorepo.
+
+## 2026-11-06 14:04 — Dépôts suivis : filtre par sous-dossier (monorepo)
+
+- `Depot.chemin` (migration `0002_depot_chemin`, unicité projet+owner+nom+chemin) : la synchro passe `path` à l'API commits, ne garde que les fichiers sous le chemin (stats recalculées dessus) et ignore un commit hors dossier (webhook inclus). Formulaire : champ « Sous-dossier suivi », validé côté API (pas de `..`, d'espace ni d'antislash). Sérialiseur : `chemin`, `libelle`, `url` vers le dossier.
+- Vérifié : pytest 87/87 (nouveau test `test_un_sous_dossier_filtre_les_commits_et_leurs_stats`), vitest 12/12, build web, compose config, migration appliquée en conteneur, santé 200. Commit 3df0ad2 poussé.
+- Usage : un projet par module avec `EagleFox31/cfaoacademy` + chemin `cfao-comptes-rendus`, `cfao-academy-mail`, `cfao-needs`, `cfao-core`, `cfao-operations` ; `cfao-ops` (privé) à part avec une variable de jeton. Une synchro manuelle lance la première lecture.
