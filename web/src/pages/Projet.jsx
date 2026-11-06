@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
+import FicheDetail from '../components/FicheDetail'
 import PageModule, { Jauge, Statut, dico } from '../components/PageModule'
 import ActiviteSemaine from '../components/projet/ActiviteSemaine'
 import Equipe from '../components/projet/Equipe'
@@ -61,18 +62,20 @@ export default function Projet() {
 
   const nbProps = projet.propositions_en_attente || 0
 
+  const meta = [
+    `${projet.nb_membres} membre${projet.nb_membres > 1 ? 's' : ''}`,
+    projet.mon_role ? `vous : ${roles[projet.mon_role] || projet.mon_role}` : null,
+    <Jauge key="jauge" valeur={projet.avancement} />,
+  ].filter(Boolean)
+
   return (
-    <PageModule
+    <FicheDetail
       titre={projet.nom}
-      fil={[{ to: '/projets', libelle: 'Projets' }]}
-      sousTitre={(
-        <span style={{ display: 'inline-flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Statut code={projet.statut} libelles={statuts} />
-          <span>{projet.nb_membres} membre{projet.nb_membres > 1 ? 's' : ''}</span>
-          {projet.mon_role && <span>· vous : {roles[projet.mon_role] || projet.mon_role}</span>}
-          <span style={{ minWidth: 160, display: 'inline-block' }}><Jauge valeur={projet.avancement} /></span>
-        </span>
-      )}
+      etiquette={<Statut code={projet.statut} libelles={statuts} />}
+      meta={meta}
+      chapeau={projet.description}
+      repli="/projets"
+      fermerLibelle="Fermer le projet"
     >
       {chargement && <div className="pj-note" aria-live="polite">Actualisation…</div>}
       {erreur && <div className="pj-erreur">{erreur.message}</div>}
@@ -96,6 +99,6 @@ export default function Projet() {
       )}
       {onglet === 'propositions' && <PropositionsDuProjet projet={projet} referentiel={referentiel} onChange={rafraichir} />}
       {onglet === 'parametres' && <Parametres projet={projet} referentiel={referentiel} onChange={rafraichir} />}
-    </PageModule>
+    </FicheDetail>
   )
 }

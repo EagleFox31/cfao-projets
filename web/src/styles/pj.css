@@ -258,3 +258,47 @@
 /* En-tête de section : icône alignée sur le sur-titre. */
 .portal-section-eyebrow { display: inline-flex; align-items: center; gap: 6px; }
 .portal-section-icon { flex: none; }
+
+/* ── Fiche de détail (même gabarit que la page article du portail) ──── */
+.pj-fiche-page { padding: 0; background: transparent; }
+.pj-fiche-shell { position: relative; width: 100%; max-width: 1320px; margin: 0 auto; padding: 48px 32px 64px; }
+@media (max-width: 720px) { .pj-fiche-shell { padding: 24px 16px 48px; } }
+.pj-fiche-fermer {
+  position: absolute; top: 12px; right: 32px; z-index: 3;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--rule); background: white; color: var(--ink);
+  display: grid; place-items: center; cursor: pointer; padding: 0;
+  box-shadow: 0 2px 8px rgba(14, 17, 38, 0.08);
+  transition: background .15s, color .15s, border-color .15s, transform .15s;
+}
+.pj-fiche-fermer:hover { background: var(--red); color: white; border-color: var(--red); transform: scale(1.05); }
+@media (max-width: 720px) { .pj-fiche-fermer { right: 16px; top: 0; } }
+.pj-fiche {
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(14, 17, 38, 0.08); overflow: hidden;
+}
+.pj-fiche-entete { padding: 32px 40px 28px; border-bottom: 1px solid var(--rule); }
+.pj-fiche-entete h1 {
+  font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1.12; color: var(--ink); margin: 16px 0 0;
+}
+.pj-fiche-etiquette { display: block; }
+.pj-fiche-etiquette .pj-statut {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px;
+}
+.pj-fiche-meta { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+.pj-fiche-meta > li { display: flex; }
+.pj-fiche-pastille {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 7px 13px; border-radius: 999px; background: #f4f5f8; color: #374151; border: 1px solid var(--rule);
+}
+.pj-fiche-pastille .pj-jauge { min-width: 120px; }
+.pj-fiche-chapeau { font-size: clamp(17px, 2vw, 19px); line-height: 1.6; color: var(--muted); margin: 20px 0 0; max-width: 70ch; }
+.pj-fiche-corps { padding: 0 40px 40px; }
+.pj-fiche-corps .pj-onglets { margin: 0 -40px 24px; padding: 0 40px; }
+@media (max-width: 720px) {
+  .pj-fiche-entete { padding: 24px 20px 20px; }
+  .pj-fiche-corps { padding: 0 20px 28px; }
+  .pj-fiche-corps .pj-onglets { margin: 0 -20px 20px; padding: 0 20px; }
+}

@@ -118,3 +118,13 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - `Depot.chemin` (migration `0002_depot_chemin`, unicité projet+owner+nom+chemin) : la synchro passe `path` à l'API commits, ne garde que les fichiers sous le chemin (stats recalculées dessus) et ignore un commit hors dossier (webhook inclus). Formulaire : champ « Sous-dossier suivi », validé côté API (pas de `..`, d'espace ni d'antislash). Sérialiseur : `chemin`, `libelle`, `url` vers le dossier.
 - Vérifié : pytest 87/87 (nouveau test `test_un_sous_dossier_filtre_les_commits_et_leurs_stats`), vitest 12/12, build web, compose config, migration appliquée en conteneur, santé 200. Commit 3df0ad2 poussé.
 - Usage : un projet par module avec `EagleFox31/cfaoacademy` + chemin `cfao-comptes-rendus`, `cfao-academy-mail`, `cfao-needs`, `cfao-core`, `cfao-operations` ; `cfao-ops` (privé) à part avec une variable de jeton. Une synchro manuelle lance la première lecture.
+
+## 2026-11-06 16:38 — Jeton GitHub vérifié, fiche projet façon article du portail
+
+- Jeton : `GITHUB_TOKEN` chargé dans le conteneur api (valeur jamais affichée), accès au dépôt privé `cfao-ops` confirmé.
+- Nouveau gabarit `web/src/components/FicheDetail.jsx` calqué sur `frontend/src/pages/Article.jsx` du portail
+  (feuille centrée `pj-fiche`, croix `pj-fiche-fermer` = retour historique sinon `repli`, entête étiquette / pastilles méta /
+  titre / chapeau, corps avec onglets). Styles `pj-fiche-*` en fin de `web/src/styles/pj.css`.
+- `web/src/pages/Projet.jsx` utilise `FicheDetail` (statut en étiquette, pastilles membres / rôle / jauge, description en chapeau).
+  Les états erreur / chargement restent sur `PageModule`.
+- Vérifié : vitest 12/12, `npm run build`, gateway reconstruit, croix testée dans le navigateur (`/projets/1` → `/projets`).
