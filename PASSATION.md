@@ -84,3 +84,7 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Session govern-broker-app : PR #144 (Trigenys/appfactory, endpoint jeton d'installation) et PR #188 (appfactory-project-automation, mode broker-app). Reste au propriétaire : déploiement du worker, allowlists, variable broker côté dépôt.
 - Apps GitHub : `appfactory-bot` (org Trigenys, App ID 4935200, client Iv23lisXtkmMFl0u3hs5, administration:write, installée sur l'org) ≠ App de gouvernance d'AgenStart (client Iv23liGQ16lZLLIu0As1, propriétaire et slug non visibles par API : à retrouver dans github.com/settings/apps ou organizations/Trigenys/settings/apps). Point ouvert : quelle App porte la clé `GITHUB_PRIVATE_KEY` du worker (variable `GITHUB_APP_ID` dans Cloudflare).
 - Application cfao-projets : dépôt https://github.com/EagleFox31/cfao-projets, local `make up` → http://localhost:8094.
+
+## 2026-11-06 13:31 — Connexion locale
+
+- Mode standalone (.env) : identifiants de `api/profils-locaux.json` (f-demo trainer, ki-demo learner+ki, a-demo learner, c-demo team_manager, s-demo superadmin), aucun mot de passe. Accès http://localhost:8094.
