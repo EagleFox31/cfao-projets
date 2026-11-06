@@ -11,6 +11,7 @@ export default function PvCard({
   onClick,
   selected,
   className = '',
+  children,
 }) {
   const isInteractive = Boolean(onClick)
   const resolvedHoverHint = hoverHint === false || !hoverHint ? null : hoverHint
@@ -72,6 +73,7 @@ export default function PvCard({
         {kicker && <div className="kicker">{kicker}</div>}
         <h3>{title}</h3>
         {meta && <div className="meta">{meta}</div>}
+        {children}
 
         {cta && (
           <div className="pv-card-cta">
