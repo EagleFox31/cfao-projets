@@ -170,3 +170,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
   rattaché en toutes branches, synchro OK (2 commits, `main`). 9 projets au total.
 - `planificateur` écarté : application de planning de réunions pour une congrégation, sans lien avec CFAO.
 - État : 3 commits locaux non poussés sur main (1222548, 8f36629, def5d6b). Prochaine étape : push sur accord.
+
+## 2026-11-07 03:39 — Push sur main
+
+- 4 commits poussés sur origin/main (zébrage, liste en cartes, toutes branches par défaut, passation). Rien en attente localement.
+- Prochaine étape : rattacher les logins GitHub aux personnes (contributeurs « non rattaché »).
