@@ -99,7 +99,8 @@ def _projets_visibles(request):
 
 def ser_personne(p):
     return {"id": p.id, "sujet": p.sujet, "prenom": p.prenom, "nom": p.nom,
-            "nom_complet": p.nom_complet, "email": p.email, "github_login": p.github_login}
+            "nom_complet": p.nom_complet, "email": p.email, "github_login": p.github_login,
+            "adresses_git": p.adresses_git or []}
 
 
 def ser_membre(m):
@@ -269,10 +270,15 @@ def _modifier_personne(personne, corps):
         if login and not all(c.isalnum() or c == "-" for c in login) or len(login) > 39:
             return _erreur("github_login : identifiant GitHub invalide", 400)
         personne.github_login = login
+    if "adresses_git" in corps:
+        adresses, erreur = formulaires.adresses_git(corps.get("adresses_git"))
+        if erreur:
+            return _erreur(erreur, 400)
+        personne.adresses_git = adresses
     if "actif" in corps:
         personne.actif = bool(corps["actif"])
     personne.save()
-    if personne.github_login:
+    if personne.github_login or personne.adresses_git:
         github.rattacher_personnes()
     return Response(ser_personne(personne))
 

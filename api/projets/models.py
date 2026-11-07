@@ -40,6 +40,9 @@ STATUTS_PROPOSITION = (
 )
 
 
+PREFIXE_PRE_ENREGISTREMENT = "pre:"
+
+
 class Personne(models.Model):
     """Une identite de la plateforme vue par le module.
 
@@ -52,11 +55,19 @@ class Personne(models.Model):
     nom = models.CharField(max_length=120, blank=True)
     email = models.EmailField(blank=True)
     github_login = models.CharField(max_length=80, blank=True, db_index=True)
+    # Autres adresses d'auteur de commit (poste de bureau, ancienne adresse...),
+    # en minuscules : les commits sans login GitHub sont rattaches par elles.
+    adresses_git = models.JSONField(default=list, blank=True)
     actif = models.BooleanField(default=True)
     vu_le = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ("nom", "prenom")
+
+    @staticmethod
+    def sujet_pre_enregistre(email):
+        """Sujet provisoire d'une fiche declaree avant la premiere connexion."""
+        return f"{PREFIXE_PRE_ENREGISTREMENT}{email.strip().lower()}"
 
     @classmethod
     def depuis_principal(cls, principal):
@@ -67,6 +78,11 @@ class Personne(models.Model):
         champs = {k: v[:254] for k, v in (("prenom", profil.get("firstName") or ""),
                                           ("nom", profil.get("lastName") or ""),
                                           ("email", profil.get("email") or "")) if v}
+        email = champs.get("email")
+        if email and not cls.objects.filter(sujet=principal.id).exists():
+            # Premiere connexion d'une personne declaree a l'avance : la fiche
+            # (login GitHub, adresses, commits rattaches) prend son vrai sujet.
+            cls.objects.filter(sujet=cls.sujet_pre_enregistre(email)).update(sujet=principal.id)
         personne, cree = cls.objects.get_or_create(sujet=principal.id, defaults=champs)
         if not cree and any(getattr(personne, k) != v for k, v in champs.items()):
             for k, v in champs.items():

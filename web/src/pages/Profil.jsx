@@ -11,20 +11,26 @@ export default function Profil() {
   const [login, setLogin] = useState(null)
   const action = useAction()
   const valeur = login ?? donnees?.github_login ?? ''
+  const [adresses, setAdresses] = useState(null)
+  const valeurAdresses = adresses ?? (donnees?.adresses_git || []).join('\n')
   const [enregistre, setEnregistre] = useState(false)
 
   function envoyer(e) {
     e.preventDefault()
     setEnregistre(false)
-    action.lancer(projets.modifierMoi({ github_login: valeur.trim().replace(/^@/, '') || null }), (r) => {
+    action.lancer(projets.modifierMoi({
+      github_login: valeur.trim().replace(/^@/, '') || null,
+      adresses_git: valeurAdresses.split(/[\s,;]+/).filter(Boolean),
+    }), (r) => {
       remplacer(r)
       setLogin(null)
+      setAdresses(null)
       setEnregistre(true)
     })
   }
 
   return (
-    <PageModule titre="Mon profil" sousTitre="Votre identité vient de la plateforme ; seul l’identifiant GitHub se règle ici.">
+    <PageModule titre="Mon profil" sousTitre="Votre identité vient de la plateforme ; seuls l’identifiant GitHub et vos adresses de commit se règlent ici.">
       <div className="pj-grille pj-grille--2">
         <section className="pj-panneau">
           <div className="pj-panneau-titre"><h2>Identité</h2></div>
@@ -46,13 +52,17 @@ export default function Profil() {
               <label className="pj-champ pj-champ--large"><span>Identifiant GitHub</span>
                 <input value={valeur} onChange={e => { setLogin(e.target.value); setEnregistre(false) }} placeholder="votre-login" />
               </label>
+              <label className="pj-champ pj-champ--large"><span>Autres adresses de commit</span>
+                <textarea rows={3} value={valeurAdresses} placeholder="une adresse par ligne, ex. poste du bureau"
+                  onChange={e => { setAdresses(e.target.value); setEnregistre(false) }} />
+              </label>
               <p className="pj-note pj-champ--large">
-                Les commits dont l’auteur GitHub porte cet identifiant, ou votre adresse e-mail, vous sont attribués dans l’activité de la semaine.
+                Les commits dont l’auteur GitHub porte cet identifiant, votre adresse e-mail ou l’une de ces adresses vous sont attribués dans l’activité de la semaine.
               </p>
               {action.erreur && <div className="pj-erreur pj-champ--large">{action.erreur}</div>}
               {enregistre && <div className="pj-succes pj-champ--large">Enregistré.</div>}
               <div className="pj-formulaire-actions">
-                <button type="submit" className="pj-btn pj-btn--primaire" disabled={action.enCours || login === null}>Enregistrer</button>
+                <button type="submit" className="pj-btn pj-btn--primaire" disabled={action.enCours || (login === null && adresses === null)}>Enregistrer</button>
               </div>
             </form>
           )}

@@ -102,7 +102,11 @@ def _personne_pour(login, email):
         if personne:
             return personne
     if email:
-        return Personne.objects.filter(email__iexact=email).first()
+        email = email.strip().lower()
+        # Recherche dans les adresses secondaires faite en Python : portable
+        # (SQLite, PostgreSQL) et la table des personnes reste petite.
+        return (Personne.objects.filter(email__iexact=email).first()
+                or next((p for p in Personne.objects.exclude(adresses_git=[]) if email in p.adresses_git), None))
     return None
 
 
@@ -176,12 +180,14 @@ def synchroniser(depot):
 def rattacher_personnes():
     """Relie les commits orphelins aux personnes dont le login ou l'e-mail correspond."""
     total = 0
-    for personne in Personne.objects.exclude(github_login="", email=""):
-        filtre = Q()
+    for personne in Personne.objects.all():
+        filtre = Q(pk__in=[])
         if personne.github_login:
             filtre |= Q(auteur_login__iexact=personne.github_login)
         if personne.email:
             filtre |= Q(auteur_email__iexact=personne.email)
+        for adresse in personne.adresses_git or []:
+            filtre |= Q(auteur_email__iexact=adresse)
         total += Commit.objects.filter(filtre, personne__isnull=True).update(personne=personne)
     return total
 

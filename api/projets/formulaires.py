@@ -175,3 +175,27 @@ def proposition(corps):
 def _serialisable(brut, valide):
     """Garde du contenu brut les seules cles retenues, en JSON (dates en texte)."""
     return {k: brut[k] for k in valide if k in brut}
+
+
+MAX_ADRESSES_GIT = 20
+
+
+def adresses_git(valeur):
+    """Liste d'adresses d'auteur de commit : minuscules, sans doublon. Renvoie (liste, erreur)."""
+    if valeur in (None, ""):
+        return [], None
+    if isinstance(valeur, str):
+        valeur = valeur.replace(",", "\n").splitlines()
+    if not isinstance(valeur, list) or not all(isinstance(a, str) for a in valeur):
+        return None, "adresses_git : liste d'adresses attendue"
+    propres = []
+    for adresse in (a.strip().lower() for a in valeur):
+        if not adresse:
+            continue
+        if "@" not in adresse or len(adresse) > 254 or any(c.isspace() for c in adresse):
+            return None, f"adresses_git : adresse invalide « {adresse[:60]} »"
+        if adresse not in propres:
+            propres.append(adresse)
+    if len(propres) > MAX_ADRESSES_GIT:
+        return None, f"adresses_git : {MAX_ADRESSES_GIT} adresses au plus"
+    return propres, None

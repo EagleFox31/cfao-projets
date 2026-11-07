@@ -175,3 +175,15 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - 4 commits poussés sur origin/main (zébrage, liste en cartes, toutes branches par défaut, passation). Rien en attente localement.
 - Prochaine étape : rattacher les logins GitHub aux personnes (contributeurs « non rattaché »).
+
+## 2026-11-07 03:48 — Personnes déclarées avant connexion, adresses de commit secondaires
+
+- `Personne.adresses_git` (migration 0003) : autres adresses d'auteur de commit (poste du bureau, ancienne adresse),
+  utilisées par `_personne_pour` et `rattacher_personnes`. Réglables sur la page Profil et via `PATCH personnes/moi`.
+- Commande idempotente `manage.py declarer_personne --email … [--prenom --nom --github --adresse-git …]` :
+  crée une fiche au sujet provisoire `pre:<email>` ; à la première connexion plateforme avec le même e-mail,
+  `depuis_principal` lui donne le vrai sujet (pas de doublon, commits conservés). Tests : `test_personnes_git.py`.
+- Données locales : 2 personnes déclarées (dev 1 = la propriétaire, login EagleFox31 + adresse du poste MEDACAP + adresse
+  Trigenys ; Ibrahim Mbowou, login MbowouIbrah + 3 adresses). Tous les commits rattachés sauf 3 de dependabot.
+  E-mails réels gardés en base seulement (dépôt public). Nom de la propriétaire non renseigné : viendra de la plateforme.
+- Vérifs : pytest 92 passed, vitest 12, build OK, compose config OK, api/synchro/gateway reconstruits.
