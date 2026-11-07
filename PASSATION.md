@@ -187,3 +187,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
   Trigenys ; Ibrahim Mbowou, login MbowouIbrah + 3 adresses). Tous les commits rattachés sauf 3 de dependabot.
   E-mails réels gardés en base seulement (dépôt public). Nom de la propriétaire non renseigné : viendra de la plateforme.
 - Vérifs : pytest 92 passed, vitest 12, build OK, compose config OK, api/synchro/gateway reconstruits.
+
+## 2026-11-07 03:59 — Projet CFAO Planning
+
+- Le dossier `cfao-planning` de cfaoacademy n'existe que sur la branche `feature/15-1-cerbos-pdp-unique` (pas sur main), d'où l'oubli.
+- Projet 10 « CFAO Planning » créé, dépôt cfaoacademy sous-dossier `cfao-planning`, toutes branches : 2 commits, rattachés. 10 projets.
+- Leçon : chercher un module sur toutes les branches, pas seulement la branche par défaut.
+- État : 1 commit local non poussé (650e068) + cette entrée.
