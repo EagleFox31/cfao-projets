@@ -194,3 +194,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Projet 10 « CFAO Planning » créé, dépôt cfaoacademy sous-dossier `cfao-planning`, toutes branches : 2 commits, rattachés. 10 projets.
 - Leçon : chercher un module sur toutes les branches, pas seulement la branche par défaut.
 - État : 1 commit local non poussé (650e068) + cette entrée.
+
+## 2026-11-07 04:09 — Push sur main
+
+- Commits poussés sur origin/main (adresses de commit secondaires, déclaration de personnes, projet CFAO Planning). Rien en attente.
+- 10 projets, tous liés à GitHub ; commits attribués aux 2 développeurs sauf dependabot.
