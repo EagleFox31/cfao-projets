@@ -19,7 +19,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from .models import Commit, Depot, Personne
+from .models import Commit, Depot, Personne, Proposition
 
 journal = logging.getLogger(__name__)
 DELAI = 20
@@ -178,11 +178,47 @@ def synchroniser(depot):
         depot.derniere_erreur = str(exc)[:500]
         depot.save(update_fields=["derniere_erreur"])
         raise
+    avertissement = ""
+    try:   # un jeton sans droit sur les issues ne doit pas bloquer les commits
+        importer_issues(depot, depuis if depot.derniere_synchro else None)
+    except ErreurGitHub as exc:
+        avertissement = f"Issues non importees : {exc}"[:500]
+        journal.warning("%s", avertissement)
     depot.branche_par_defaut = branche_defaut[:120]
     depot.derniere_synchro = timezone.now()
-    depot.derniere_erreur = ""
+    depot.derniere_erreur = avertissement
     depot.save(update_fields=["branche_par_defaut", "derniere_synchro", "derniere_erreur"])
     return nouveaux
+
+
+def importe_les_issues(depot):
+    """Un sous-dossier de monorepo n'importe que les issues de son etiquette."""
+    return bool(depot.issues_etiquette or not depot.chemin)
+
+
+def importer_issues(depot, depuis=None):
+    """Chaque issue ouverte devient une proposition « ajouter une tache », une seule fois."""
+    if not importe_les_issues(depot):
+        return 0
+    params = {"state": "open", "per_page": PAR_PAGE}
+    if depot.issues_etiquette:
+        params["labels"] = depot.issues_etiquette
+    if depuis:
+        params["since"] = depuis.astimezone(tz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    nouvelles = 0
+    for issue in _pages(depot, f"/repos/{depot.proprietaire}/{depot.nom}/issues", params):
+        if issue.get("pull_request"):
+            continue
+        reference = f"{depot.plein_nom}#{issue['number']}"
+        contenu = {"titre": (issue.get("title") or reference)[:200],
+                   "description": (issue.get("body") or "")[:20_000]}
+        auteur = _personne_pour((issue.get("user") or {}).get("login"), None)
+        _, cree = Proposition.objects.get_or_create(
+            projet=depot.projet, reference=reference,
+            defaults={"type": "ajouter_tache", "contenu": contenu, "source": "github", "auteur": auteur,
+                      "url": (issue.get("html_url") or "")[:300], "motif": f"Issue GitHub {reference}"})
+        nouvelles += cree
+    return nouvelles
 
 
 def rattacher_personnes():

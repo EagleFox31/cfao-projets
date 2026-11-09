@@ -11,12 +11,13 @@ function AjoutDepot({ projet, onFait, onAnnuler }) {
   const [jeton, setJeton] = useState('')
   const [chemin, setChemin] = useState('')
   const [toutes, setToutes] = useState(true)
+  const [etiquette, setEtiquette] = useState('')
   const { enCours, erreur, lancer } = useAction()
   const valide = /^[\w.-]+\/[\w.-]+$/.test(depot.trim())
 
   function envoyer(e) {
     e.preventDefault()
-    lancer(projets.ajouterDepot(projet.id, { depot: depot.trim(), jeton_variable: jeton.trim() || null, toutes_branches: toutes, chemin: chemin.trim().replace(/^\/+|\/+$/g, '') || '' }), onFait)
+    lancer(projets.ajouterDepot(projet.id, { depot: depot.trim(), jeton_variable: jeton.trim() || null, toutes_branches: toutes, chemin: chemin.trim().replace(/^\/+|\/+$/g, '') || '', issues_etiquette: etiquette.trim() }), onFait)
   }
 
   return (
@@ -26,6 +27,9 @@ function AjoutDepot({ projet, onFait, onAnnuler }) {
       </label>
       <label className="pj-champ"><span>Sous-dossier suivi (monorepo)</span>
         <input value={chemin} onChange={e => setChemin(e.target.value)} placeholder="ex. cfao-comptes-rendus (vide = tout le dépôt)" />
+      </label>
+      <label className="pj-champ"><span>Étiquette des issues à importer</span>
+        <input value={etiquette} onChange={e => setEtiquette(e.target.value)} placeholder="vide = toutes (aucune pour un sous-dossier)" />
       </label>
       <label className="pj-champ"><span>Variable d’environnement du jeton</span>
         <input value={jeton} onChange={e => setJeton(e.target.value)} placeholder="GITHUB_TOKEN (défaut)" />
@@ -97,7 +101,8 @@ export default function Parametres({ projet, referentiel, onChange }) {
                 {projet.depots.map(dep => (
                   <tr key={dep.id}>
                     <td><a className="pj-mono" href={dep.url} target="_blank" rel="noreferrer">{dep.libelle || dep.depot}</a>
-                      <div className="pj-note">jeton : {dep.jeton_variable || 'GITHUB_TOKEN'}</div></td>
+                      <div className="pj-note">jeton : {dep.jeton_variable || 'GITHUB_TOKEN'}</div>
+                      <div className="pj-note">issues : {dep.importe_issues ? (dep.issues_etiquette ? `étiquette « ${dep.issues_etiquette} »` : 'toutes') : 'non importées'}</div></td>
                     <td>{dep.toutes_branches ? 'toutes' : (dep.branche_par_defaut || 'par défaut')}</td>
                     <td className="num">{dep.commits}</td>
                     <td>

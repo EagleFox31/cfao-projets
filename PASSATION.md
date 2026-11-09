@@ -222,3 +222,11 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - 5c888e1 (relecture 72 h de la synchro) poussé sur origin/main.
 - Reste à trancher : `api/profils-locaux.json` (adresses réelles, dépôt public) ; `.claude/launch.json` non commité.
+
+## 2026-11-09 12:53 — Propositions depuis les issues GitHub
+
+- Les propositions viennent de l'app **et** des issues GitHub ouvertes : chaque issue devient une proposition « ajouter une tâche » (source `github`, référence `owner/depot#n`, une seule fois, contrainte unique), importée à chaque synchro. Migration 0004.
+- Règle monorepo : dépôt suivi en entier → toutes les issues ; sous-dossier (`chemin`) → seulement l'étiquette réglée dans Paramètres (« Étiquette des issues à importer »), sinon rien.
+- Un jeton sans droit sur les issues n'empêche plus la lecture des commits : avertissement dans `derniere_erreur`. Cas réel : EagleFox31/cfao-ops répond 403 sur /issues.
+- Vérifié : 96 tests API, `docker compose config -q`, synchro réelle sans erreur bloquante, santé 200. `make policy-test` non lancé (pas de make ; aucune règle Cerbos modifiée).
+- Reste : aucune issue ouverte aujourd'hui ; régler les étiquettes par module cfaoacademy ; décision sur `api/profils-locaux.json` toujours ouverte.

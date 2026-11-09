@@ -142,7 +142,8 @@ def depot(corps):
     if chemin and (".." in chemin.split("/") or any(c.isspace() or c == "\\" for c in chemin)):
         raise Invalide("chemin : sous-dossier du dépôt attendu (ex. apps/mail)")
     return {"proprietaire": proprietaire, "nom": nom, "jeton_variable": jeton_variable,
-            "toutes_branches": bool(corps.get("toutes_branches", False)), "chemin": chemin}
+            "toutes_branches": bool(corps.get("toutes_branches", False)), "chemin": chemin,
+            "issues_etiquette": (_texte(corps.get("issues_etiquette"), "issues_etiquette", 50) or "").strip()}
 
 
 def proposition(corps):

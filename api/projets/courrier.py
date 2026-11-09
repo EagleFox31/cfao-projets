@@ -113,6 +113,8 @@ def proposition_soumise(proposition, decideurs):
 
 
 def proposition_decidee(proposition):
+    if not proposition.auteur:
+        return None   # issue GitHub sans auteur rattache : personne a prevenir
     projet = proposition.projet
     verdict = "acceptée" if proposition.statut == "acceptee" else "refusée"
     decideur = proposition.decideur.nom_complet if proposition.decideur else "le chef de projet"

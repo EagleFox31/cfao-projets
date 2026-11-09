@@ -119,6 +119,7 @@ def ser_depot(d):
     return {"id": d.id, "depot": d.plein_nom, "chemin": d.chemin, "libelle": d.libelle,
             "branche_par_defaut": d.branche_par_defaut,
             "toutes_branches": d.toutes_branches, "jeton_variable": d.jeton_variable,
+            "issues_etiquette": d.issues_etiquette, "importe_issues": github.importe_les_issues(d),
             "derniere_synchro": d.derniere_synchro.isoformat() if d.derniere_synchro else None,
             "derniere_erreur": d.derniere_erreur, "commits": d.commits.count(),
             "url": f"https://github.com/{d.plein_nom}" + (f"/tree/{d.branche_par_defaut or 'HEAD'}/{d.chemin}" if d.chemin else "")}
@@ -127,7 +128,8 @@ def ser_depot(d):
 def ser_proposition(p):
     return {"id": p.id, "projet": {"id": p.projet_id, "nom": p.projet.nom}, "type": p.type,
             "cible_id": p.cible_id, "contenu": p.contenu, "motif": p.motif, "statut": p.statut,
-            "auteur": ser_personne(p.auteur),
+            "auteur": ser_personne(p.auteur) if p.auteur else None,
+            "source": p.source, "reference": p.reference, "url": p.url,
             "decideur": ser_personne(p.decideur) if p.decideur else None,
             "decidee_le": p.decidee_le.isoformat() if p.decidee_le else None,
             "commentaire": p.commentaire, "soumise_le": p.soumise_le.isoformat()}
@@ -491,7 +493,10 @@ class Depots(APIView):
             return _erreur(str(exc), 400)
         depot, cree = Depot.objects.get_or_create(
             projet=projet, proprietaire=champs["proprietaire"], nom=champs["nom"], chemin=champs["chemin"],
-            defaults={k: champs[k] for k in ("jeton_variable", "toutes_branches")})
+            defaults={k: champs[k] for k in ("jeton_variable", "toutes_branches", "issues_etiquette")})
+        if not cree and "issues_etiquette" in _corps(request) and depot.issues_etiquette != champs["issues_etiquette"]:
+            depot.issues_etiquette = champs["issues_etiquette"]
+            depot.save(update_fields=["issues_etiquette"])
         return Response(ser_depot(depot), status=201 if cree else 200)
 
 
@@ -620,7 +625,7 @@ class PropositionDecision(APIView):
             return _erreur("introuvable", 404)
         projet = proposition.projet
         _autoriser(request, PROPOSITION, proposition.id, "decide",
-                   _attributs(projet, request, auteurId=proposition.auteur.sujet))
+                   _attributs(projet, request, auteurId=proposition.auteur.sujet if proposition.auteur else ""))
         corps = _corps(request)
         decision = corps.get("decision")
         if decision not in ("acceptee", "refusee"):

@@ -52,7 +52,9 @@ export function CarteProposition({ proposition, referentiel, peutDecider = false
           <strong>{types[proposition.type] || proposition.type}</strong>
           {avecProjet && <> · <Link to={`/projets/${proposition.projet.id}`}>{proposition.projet.nom}</Link></>}
           <div className="pj-note">
-            par {proposition.auteur?.nom_complet || proposition.auteur?.sujet} · {dateHeure(proposition.soumise_le)}
+            {proposition.source === 'github'
+              ? <>issue <a href={proposition.url} target="_blank" rel="noreferrer">{proposition.reference}</a>{proposition.auteur ? ` de ${proposition.auteur.nom_complet}` : ''}</>
+              : <>par {proposition.auteur?.nom_complet || proposition.auteur?.sujet}</>} · {dateHeure(proposition.soumise_le)}
             {proposition.cible_id ? ` · cible n° ${proposition.cible_id}` : ''}
           </div>
         </div>

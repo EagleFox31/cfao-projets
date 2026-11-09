@@ -27,9 +27,10 @@ def appliquer(proposition, decideur):
             projet.save()
         elif proposition.type == "ajouter_tache":
             champs = formulaires.tache(contenu)
-            if not Tache.objects.filter(projet=projet, titre=champs["titre"],
-                                        cree_par=proposition.auteur).exists():
-                tache = Tache.objects.create(projet=projet, cree_par=proposition.auteur, **champs)
+            # Issue GitHub sans auteur rattache : la tache est au nom de qui l'accepte.
+            createur = proposition.auteur or decideur
+            if not Tache.objects.filter(projet=projet, titre=champs["titre"], cree_par=createur).exists():
+                tache = Tache.objects.create(projet=projet, cree_par=createur, **champs)
                 courrier.tache_assignee(tache, decideur)
         elif proposition.type == "modifier_tache":
             tache = Tache.objects.filter(projet=projet, id=proposition.cible_id).first()

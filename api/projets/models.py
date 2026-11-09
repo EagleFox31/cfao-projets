@@ -33,6 +33,7 @@ TYPES_PROPOSITION = (
     ("modifier_tache", "Modifier une tâche"),
     ("ajouter_membre", "Ajouter un membre"),
 )
+SOURCES_PROPOSITION = (("app", "Application"), ("github", "Issue GitHub"))
 STATUTS_PROPOSITION = (
     ("soumise", "Soumise"),
     ("acceptee", "Acceptée"),
@@ -176,6 +177,10 @@ class Depot(models.Model):
     # Nom d'une variable d'environnement portant un jeton propre a ce depot,
     # jamais le jeton lui-meme.
     jeton_variable = models.CharField(max_length=80, blank=True)
+    # Issues ouvertes importees comme propositions. Vide : toutes les issues si le
+    # depot est suivi en entier, aucune pour un sous-dossier de monorepo (on ne
+    # sait pas a quel module une issue appartient sans etiquette).
+    issues_etiquette = models.CharField(max_length=50, blank=True)
     derniere_synchro = models.DateTimeField(null=True, blank=True)
     derniere_erreur = models.CharField(max_length=500, blank=True)
     ajoute_le = models.DateTimeField(auto_now_add=True)
@@ -230,8 +235,14 @@ class Commit(models.Model):
 class Proposition(models.Model):
     """Une modification proposee par quelqu'un qui n'a pas le droit de l'appliquer."""
     projet = models.ForeignKey(Projet, on_delete=models.CASCADE, related_name="propositions")
-    auteur = models.ForeignKey(Personne, on_delete=models.PROTECT, related_name="propositions")
+    # Vide pour une issue GitHub dont l'auteur n'est rattache a personne.
+    auteur = models.ForeignKey(Personne, null=True, blank=True, on_delete=models.PROTECT,
+                               related_name="propositions")
     type = models.CharField(max_length=30, choices=TYPES_PROPOSITION)
+    source = models.CharField(max_length=10, choices=SOURCES_PROPOSITION, default="app")
+    # Issue d'origine (« proprietaire/depot#12 ») : une seule proposition par issue.
+    reference = models.CharField(max_length=200, blank=True)
+    url = models.URLField(max_length=300, blank=True)
     cible_id = models.PositiveIntegerField(null=True, blank=True)
     contenu = models.JSONField(default=dict)
     motif = models.TextField(blank=True)
@@ -244,6 +255,8 @@ class Proposition(models.Model):
 
     class Meta:
         ordering = ("-soumise_le",)
+        constraints = [models.UniqueConstraint(fields=["projet", "reference"], condition=~models.Q(reference=""),
+                                               name="proposition_unique_par_issue")]
 
 
 class Courrier(models.Model):

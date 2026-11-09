@@ -30,6 +30,7 @@ def _depot(client, projet, faux_github, toutes_branches=False):
         _brut("c" * 40, "inconnu", "2026-11-05T08:00:00Z", 1, 0),
     ]
     faux_github.reponses["/repos/cfao/portail"] = {"default_branch": "main"}
+    faux_github.reponses["/repos/cfao/portail/issues"] = []
     return r.json()
 
 
@@ -60,6 +61,18 @@ def test_une_erreur_github_est_notee_sans_casser(client, projet, faux_github):
     assert r.status_code == 502 and r.json()["erreur"] == "GitHub 404"
     assert Depot.objects.get(id=depot["id"]).derniere_erreur == "GitHub 404"
     assert client("s-demo").get("/pj-donnees/erreurs").json()["erreurs"][0]["origine"] == "synchro"
+
+
+def test_un_jeton_sans_droit_sur_les_issues_n_empeche_pas_les_commits(client, projet, faux_github):
+    depot = _depot(client, projet, faux_github)
+    faux_github.reponses["/repos/cfao/portail/issues"] = lambda: (_ for _ in ()).throw(
+        github.ErreurGitHub("GitHub refuse l'accès à cfao/portail (403)"))
+    r = client().post(f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser")
+    assert r.status_code == 200, r.content
+    assert r.json()["nouveaux"] == 3 and Commit.objects.count() == 3
+    enregistre = Depot.objects.get(id=depot["id"])
+    assert enregistre.derniere_synchro is not None
+    assert enregistre.derniere_erreur.startswith("Issues non importees")
 
 
 def test_l_activite_hebdo_par_personne_et_les_diffs(client, projet, faux_github):
@@ -165,3 +178,59 @@ def test_la_synchro_relit_assez_loin_pour_un_commit_pousse_en_retard(client, pro
     since = [p for c, p in faux_github.appels if c.endswith("/commits")][0]["since"]
     attendu = (derniere - timedelta(hours=72)).astimezone(github.tz.utc).strftime("%Y-%m-%dT%H:%M")
     assert since.startswith(attendu)
+
+
+def _issue(numero, titre, login="formateur-demo", pr=False, labels=()):
+    brut = {"number": numero, "title": titre, "body": "Detail", "html_url": f"https://github.com/cfao/portail/issues/{numero}",
+            "user": {"login": login}, "labels": [{"name": n} for n in labels]}
+    if pr:
+        brut["pull_request"] = {"url": "x"}
+    return brut
+
+
+def test_les_issues_ouvertes_deviennent_des_propositions_une_seule_fois(client, projet, faux_github):
+    from projets.models import Proposition
+    depot = _depot(client, projet, faux_github)
+    client().patch("/pj-donnees/personnes/moi", {"github_login": "formateur-demo"}, format="json")
+    faux_github.reponses["/repos/cfao/portail/issues"] = [_issue(1, "Ajouter l'export"), _issue(2, "PR", pr=True),
+                                                         _issue(3, "Bug", login="inconnu")]
+    url = f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser"
+    client().post(url)
+    client().post(url)   # rejouer : aucun doublon
+    props = {p.reference: p for p in Proposition.objects.all()}
+    assert set(props) == {"cfao/portail#1", "cfao/portail#3"}
+    p1 = props["cfao/portail#1"]
+    assert p1.source == "github" and p1.type == "ajouter_tache" and p1.contenu["titre"] == "Ajouter l'export"
+    assert p1.auteur.sujet == "f-demo" and props["cfao/portail#3"].auteur is None
+    # Visible et decidable par le chef ; l'acceptation cree la tache.
+    r = client().get("/pj-donnees/propositions").json()
+    assert {p["reference"] for p in r["a_decider"]} == {"cfao/portail#1", "cfao/portail#3"}
+    sans_auteur = props["cfao/portail#3"]
+    r = client().post(f"/pj-donnees/propositions/{sans_auteur.id}/decision", {"decision": "acceptee"}, format="json")
+    assert r.status_code == 200, r.content
+    assert r.json()["source"] == "github" and r.json()["auteur"] is None
+    assert projet_taches(projet) == ["Bug"]
+
+
+def projet_taches(projet):
+    from projets.models import Tache
+    return list(Tache.objects.filter(projet_id=projet["id"]).values_list("titre", flat=True))
+
+
+def test_un_sous_dossier_de_monorepo_n_importe_que_son_etiquette(client, projet, faux_github):
+    from projets.models import Proposition
+    r = client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/portail", "chemin": "apps/mail"}, format="json")
+    depot = r.json()
+    assert depot["importe_issues"] is False
+    faux_github.reponses["/repos/cfao/portail"] = {"default_branch": "main"}
+    faux_github.reponses["/repos/cfao/portail/commits"] = []
+    faux_github.reponses["/repos/cfao/portail/issues"] = [_issue(7, "Mail")]
+    client().post(f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser")
+    assert Proposition.objects.count() == 0
+    # Etiquette posee (meme depot reposte : mise a jour, pas de doublon) : filtre transmis a GitHub.
+    r = client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/portail", "chemin": "apps/mail",
+                                                    "issues_etiquette": "mail"}, format="json")
+    assert r.status_code == 200 and r.json()["importe_issues"] is True
+    client().post(f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser")
+    params = [p for c, p in faux_github.appels if c.endswith("/issues")][-1]
+    assert params["labels"] == "mail" and Proposition.objects.count() == 1
