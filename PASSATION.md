@@ -230,3 +230,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Un jeton sans droit sur les issues n'empêche plus la lecture des commits : avertissement dans `derniere_erreur`. Cas réel : EagleFox31/cfao-ops répond 403 sur /issues.
 - Vérifié : 96 tests API, `docker compose config -q`, synchro réelle sans erreur bloquante, santé 200. `make policy-test` non lancé (pas de make ; aucune règle Cerbos modifiée).
 - Reste : aucune issue ouverte aujourd'hui ; régler les étiquettes par module cfaoacademy ; décision sur `api/profils-locaux.json` toujours ouverte.
+
+## 2026-11-09 12:55 — Push sur main
+
+- 44738b3 (propositions depuis les issues GitHub) poussé sur origin/main.
+- Reste à trancher : `api/profils-locaux.json` (adresses réelles, dépôt public) ; `.claude/launch.json` non commité.
