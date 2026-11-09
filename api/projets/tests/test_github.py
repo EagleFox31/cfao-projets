@@ -148,3 +148,20 @@ def test_un_sous_dossier_filtre_les_commits_et_leurs_stats(client, projet, faux_
     for chemin in ("a/../b", "a b"):
         assert client().post(f"{P}/{projet['id']}/depots", {"depot": "cfao/mono", "chemin": chemin},
                              format="json").status_code == 400
+
+
+@override_settings(SYNCHRO_RECOUVREMENT_HEURES=72)
+def test_la_synchro_relit_assez_loin_pour_un_commit_pousse_en_retard(client, projet, faux_github):
+    """Un commit date de plusieurs heures avant la derniere passe, pousse ensuite, reste rattrape."""
+    from datetime import timedelta
+    from django.utils import timezone
+    depot = _depot(client, projet, faux_github)
+    url = f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser"
+    client().post(url)
+    derniere = timezone.now()
+    Depot.objects.filter(pk=depot["id"]).update(derniere_synchro=derniere)
+    faux_github.appels.clear()
+    client().post(url)
+    since = [p for c, p in faux_github.appels if c.endswith("/commits")][0]["since"]
+    attendu = (derniere - timedelta(hours=72)).astimezone(github.tz.utc).strftime("%Y-%m-%dT%H:%M")
+    assert since.startswith(attendu)

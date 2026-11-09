@@ -37,6 +37,7 @@ env = environ.Env(
     GITHUB_TOKEN=(str, ""),
     GITHUB_API_URL=(str, "https://api.github.com"),
     GITHUB_WEBHOOK_SECRET=(str, ""),
+    SYNCHRO_RECOUVREMENT_HEURES=(int, 72),
     # Courrier : `hub` (cfao-academy-mail), `smtp`, `console` (journal) ou `aucun`.
     MAIL_MODE=(str, "console"),
     MAIL_HUB_URL=(str, "http://mail-api:8000"),
@@ -176,6 +177,8 @@ REST_FRAMEWORK = {
 GITHUB_TOKEN = env("GITHUB_TOKEN")
 GITHUB_API_URL = env("GITHUB_API_URL").rstrip("/")
 GITHUB_WEBHOOK_SECRET = env("GITHUB_WEBHOOK_SECRET")
+# Heures relues en arriere a chaque synchronisation (commits pousses en retard).
+SYNCHRO_RECOUVREMENT_HEURES = env("SYNCHRO_RECOUVREMENT_HEURES")
 
 # ── Courrier ──────────────────────────────────────────────────────────
 MAIL_MODE = env("MAIL_MODE")

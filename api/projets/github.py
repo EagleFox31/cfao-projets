@@ -27,6 +27,9 @@ PAR_PAGE = 100
 PAGES_MAX = 10              # par branche et par synchronisation
 FICHIERS_MAX = 50           # detail garde par commit
 FENETRE_INITIALE = timedelta(days=90)
+# Relecture en arriere a chaque passe : un commit pousse longtemps apres sa date
+# (travail local, rebase) reste dans la fenetre. Un sha deja connu est ignore.
+RECOUVREMENT_DEFAUT_HEURES = 72
 MAX_BRANCHES = 30
 
 
@@ -150,12 +153,17 @@ def enregistrer_commit(depot, brut, branche=""):
     return True
 
 
+def recouvrement():
+    heures = getattr(settings, "SYNCHRO_RECOUVREMENT_HEURES", RECOUVREMENT_DEFAUT_HEURES)
+    return timedelta(hours=max(1, int(heures)))
+
+
 def synchroniser(depot):
     """Lit les nouveaux commits du depot. Renvoie le nombre de lignes ajoutees."""
     try:
         infos = infos_depot(depot)
         branche_defaut = infos.get("default_branch") or depot.branche_par_defaut
-        depuis = depot.derniere_synchro - timedelta(hours=1) if depot.derniere_synchro \
+        depuis = depot.derniere_synchro - recouvrement() if depot.derniere_synchro \
             else timezone.now() - FENETRE_INITIALE
         cibles = branches(depot) if depot.toutes_branches else [branche_defaut]
         if branche_defaut in cibles:

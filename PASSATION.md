@@ -205,3 +205,15 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - L'app n'était pas arrêtée (5 services actifs, santé 200) : seul le panneau navigateur était fermé.
 - Projet « CFAO Edge » créé en base : dépôt EagleFox31/cfaoacademy, chemin `edge`, toutes branches (le dossier n'existe que sur feature/15-1-cerbos-pdp-unique). 9 commits synchronisés, tous attribués.
 - 11 projets au total. Changement de données seulement, rien à commiter hors cette entrée.
+
+## 2026-11-09 11:37 — Accueil vérifié, fuite d'adresses signalée
+
+- Cartes « Où en sont vos projets » vérifiées en base : 11 projets en cours, 0 proposition, semaine 2026-W46 = 1 commit d'Ibrahim (cfao-comptes-rendus, +142/−57). Données réelles ; photos illustratives.
+- `.claude/launch.json` ajouté (aperçu attaché à :8094), non commité.
+- À trancher par la propriétaire : `api/profils-locaux.json` est suivi par git dans un dépôt PUBLIC avec 4 adresses @cfao.com réelles (depuis 6105e10). Proposé : détracker + exemple `*.demo` ; option purge d'historique ou dépôt privé.
+
+## 2026-11-09 11:55 — Synchro : commits poussés en retard
+
+- Cause : la synchro relisait depuis `derniere_synchro - 1h` (filtre `since` GitHub sur la date du commit) ; un commit daté avant la dernière passe mais poussé après était perdu (2 commits d'Ibrahim du 9/11 manquaient).
+- Correctif : relecture de `SYNCHRO_RECOUVREMENT_HEURES` (défaut 72, `.env.example`), sha déjà connus ignorés ; test de non-régression dans `test_github.py`. 93 tests verts ; api + synchro reconstruits ; commits rattrapés.
+- Toujours à trancher : `api/profils-locaux.json` (adresses @cfao.com réelles dans le dépôt public).
