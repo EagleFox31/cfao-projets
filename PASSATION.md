@@ -199,3 +199,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - Commits poussés sur origin/main (adresses de commit secondaires, déclaration de personnes, projet CFAO Planning). Rien en attente.
 - 10 projets, tous liés à GitHub ; commits attribués aux 2 développeurs sauf dependabot.
+
+## 2026-11-09 08:52 — Projet CFAO Edge
+
+- L'app n'était pas arrêtée (5 services actifs, santé 200) : seul le panneau navigateur était fermé.
+- Projet « CFAO Edge » créé en base : dépôt EagleFox31/cfaoacademy, chemin `edge`, toutes branches (le dossier n'existe que sur feature/15-1-cerbos-pdp-unique). 9 commits synchronisés, tous attribués.
+- 11 projets au total. Changement de données seulement, rien à commiter hors cette entrée.
