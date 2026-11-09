@@ -32,40 +32,6 @@ function computeGreetingKey() {
   return 'greeting_evening'
 }
 
-/* ─── Marques ──────────────────────────────────────────────────── */
-
-const BRAND_LOGOS = {
-  toyota:    '/assets/logos/toyota.png',
-  mercedes:  '/assets/logos/mercedes.png',
-  suzuki:    '/assets/logos/suzuki.png',
-  mitsubishi:'/assets/logos/mitsubishi.png',
-  byd:       '/assets/logos/byd.png',
-  citroen:   '/assets/logos/citroen.png',
-  yamaha:    '/assets/logos/yamaha.png',
-  fuso:      '/assets/logos/fuso.png',
-  hino:      '/assets/logos/hino.png',
-  jcb:       '/assets/logos/jcb.png',
-  lovol:     '/assets/logos/lovol.png',
-  'renault-trucks': '/assets/logos/renault-trucks.png',
-  'king-long': '/assets/logos/kinglong.png',
-}
-
-function BrandLogo({ brand }) {
-  const src = BRAND_LOGOS[brand]
-  if (src) {
-    return (
-      <span className="portal-header-brand-logo-wrap portal-header-brand-logo-wrap--geo" title={brand}>
-        <img src={src} alt={brand} className="portal-header-brand-logo" />
-      </span>
-    )
-  }
-  return (
-    <span className={`portal-brand-chip ${brand} portal-header-brand-chip`}>
-      {brand}
-    </span>
-  )
-}
-
 function RoleIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -81,8 +47,6 @@ function RoleIcon() {
 
 export default function PortalHeader({ user, role = 'Membre' }) {
   const [greetingKey] = useState(() => computeGreetingKey())
-  const userBrands = user.brands || []
-  const showGeoBrands = userBrands.length > 0
   return (
     <section className="page-header portal-page-header">
       <div className="portal-hero-fx" aria-hidden="true">
@@ -102,15 +66,6 @@ export default function PortalHeader({ user, role = 'Membre' }) {
             firstName={user.firstName}
             user={user}
           />
-          {showGeoBrands && (
-            <div className="portal-header-geo-row">
-              <div className="portal-header-geo-brands">
-                {userBrands.map(brand => (
-                  <BrandLogo key={brand} brand={brand} />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>

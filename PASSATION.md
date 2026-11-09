@@ -247,3 +247,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - 6ff6de0 (auteurs de commits rattachés comme contributeurs) poussé sur origin/main.
 - Reste : désigner le vrai chef de chaque projet (compte Démo partout) ; tâches vides ; `api/profils-locaux.json` à trancher ; `.claude/launch.json` non commité.
+
+## 2026-11-09 14:24 — En-tête sans logos de marques
+
+- `PortalHeader.jsx` : bloc des logos de marques (repris du portail) retiré ; sans objet pour un gestionnaire de projets. Build, 12 tests vitest, page vérifiée (0 logo). `PortalStickyBar.jsx` et `portalCardMedia.js` sont du code mort non importé, laissé tel quel.
+- En cours : réécriture des descriptions des 11 projets (claires et disant leur importance), à partir des README des dépôts.
