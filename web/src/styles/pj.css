@@ -231,7 +231,7 @@
 .pj-proposition-contenu { margin: 8px 0; font-size: 13.5px; }
 .pj-proposition-contenu dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; }
 .pj-proposition-contenu dt { color: var(--muted); }
-.pj-proposition-contenu dd { margin: 0; }
+.pj-proposition-contenu dd { margin: 0; white-space: pre-line; }
 .pj-proposition-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
 .pj-proposition-actions input { flex: 1; min-width: 180px; font: inherit; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; }
 
@@ -294,7 +294,7 @@
   padding: 7px 13px; border-radius: 999px; background: #f4f5f8; color: #374151; border: 1px solid var(--rule);
 }
 .pj-fiche-pastille .pj-jauge { min-width: 120px; }
-.pj-fiche-chapeau { font-size: clamp(17px, 2vw, 19px); line-height: 1.6; color: var(--muted); margin: 20px 0 0; max-width: 70ch; }
+.pj-fiche-chapeau { font-size: clamp(17px, 2vw, 19px); line-height: 1.6; color: var(--muted); margin: 20px 0 0; max-width: 70ch; white-space: pre-line; }
 .pj-fiche-corps { padding: 0 40px 40px; }
 .pj-fiche-corps .pj-onglets { margin: 0 -40px 24px; padding: 0 40px; }
 @media (max-width: 720px) {

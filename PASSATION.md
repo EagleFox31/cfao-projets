@@ -252,3 +252,61 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - `PortalHeader.jsx` : bloc des logos de marques (repris du portail) retiré ; sans objet pour un gestionnaire de projets. Build, 12 tests vitest, page vérifiée (0 logo). `PortalStickyBar.jsx` et `portalCardMedia.js` sont du code mort non importé, laissé tel quel.
 - En cours : réécriture des descriptions des 11 projets (claires et disant leur importance), à partir des README des dépôts.
+
+## sur — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## les — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## README — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## et — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## docs — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## des — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## dépôts. — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## CFAO — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## Operations — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## reste — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## « — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## à — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## préciser — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## », — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## car — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## le — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## code — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## na pas encore de fonction métier.\n- `pj.css` : `white-space: pre-line` sur le chapeau de fiche et les `dd` pour afficher les sauts de ligne. Build OK, vérifié sur /projets/11.\n- Commits locaux non poussés : 0a39df5 (logos) et celui-ci.\n — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## 2026-11-09 14:55 — Descriptions des projets réécrites
+
+- Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
