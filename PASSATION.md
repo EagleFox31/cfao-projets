@@ -217,3 +217,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Cause : la synchro relisait depuis `derniere_synchro - 1h` (filtre `since` GitHub sur la date du commit) ; un commit daté avant la dernière passe mais poussé après était perdu (2 commits d'Ibrahim du 9/11 manquaient).
 - Correctif : relecture de `SYNCHRO_RECOUVREMENT_HEURES` (défaut 72, `.env.example`), sha déjà connus ignorés ; test de non-régression dans `test_github.py`. 93 tests verts ; api + synchro reconstruits ; commits rattrapés.
 - Toujours à trancher : `api/profils-locaux.json` (adresses @cfao.com réelles dans le dépôt public).
+
+## 2026-11-09 12:26 — Push sur main
+
+- 5c888e1 (relecture 72 h de la synchro) poussé sur origin/main.
+- Reste à trancher : `api/profils-locaux.json` (adresses réelles, dépôt public) ; `.claude/launch.json` non commité.
