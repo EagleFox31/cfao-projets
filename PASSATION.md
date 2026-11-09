@@ -242,3 +242,8 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Rattrapage fait : 14 membres ajoutés sur les 11 projets (J. Akaa partout, I. Mbowou sur Portail, Comptes rendus, MEDACAP84) ; second passage = 0.
 - Vérifié : 97 tests API, santé 200. Commit local, non poussé.
 - Reste : le chef de chaque projet est toujours le compte Démo, à désigner à la main ; tâches toujours vides ; `api/profils-locaux.json` à trancher.
+
+## 2026-11-09 13:09 — Push sur main
+
+- 6ff6de0 (auteurs de commits rattachés comme contributeurs) poussé sur origin/main.
+- Reste : désigner le vrai chef de chaque projet (compte Démo partout) ; tâches vides ; `api/profils-locaux.json` à trancher ; `.claude/launch.json` non commité.
