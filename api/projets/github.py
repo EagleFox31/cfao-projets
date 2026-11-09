@@ -19,7 +19,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.utils import timezone
 
-from .models import Commit, Depot, Personne, Proposition
+from .models import Commit, Depot, Membre, Personne, Proposition
 
 journal = logging.getLogger(__name__)
 DELAI = 20
@@ -153,6 +153,23 @@ def enregistrer_commit(depot, brut, branche=""):
     return True
 
 
+def rattacher_auteurs(projet):
+    """Chaque auteur reconnu d'un commit du projet en devient contributeur.
+
+    Idempotent : un membre existant garde son role (fixe a la main) ; un auteur
+    non reconnu (bot, login inconnu) n'est jamais ajoute.
+    """
+    deja = set(projet.membres.values_list("personne_id", flat=True))
+    auteurs = (Commit.objects.filter(depot__projet=projet, personne__isnull=False)
+               .exclude(personne_id__in=deja).values_list("personne_id", flat=True).distinct())
+    ajoutes = 0
+    for personne_id in auteurs:
+        _, cree = Membre.objects.get_or_create(projet=projet, personne_id=personne_id,
+                                               defaults={"role_membre": "contributeur"})
+        ajoutes += cree
+    return ajoutes
+
+
 def recouvrement():
     heures = getattr(settings, "SYNCHRO_RECOUVREMENT_HEURES", RECOUVREMENT_DEFAUT_HEURES)
     return timedelta(hours=max(1, int(heures)))
@@ -178,6 +195,7 @@ def synchroniser(depot):
         depot.derniere_erreur = str(exc)[:500]
         depot.save(update_fields=["derniere_erreur"])
         raise
+    rattacher_auteurs(depot.projet)
     avertissement = ""
     try:   # un jeton sans droit sur les issues ne doit pas bloquer les commits
         importer_issues(depot, depuis if depot.derniere_synchro else None)
@@ -263,6 +281,7 @@ def traiter_push(charge):
                     nouveaux += 1
             except ErreurGitHub as exc:
                 journal.warning("webhook %s : %s", depot.plein_nom, exc)
+        rattacher_auteurs(depot.projet)
     return nouveaux
 
 

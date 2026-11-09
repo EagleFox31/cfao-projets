@@ -235,3 +235,10 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - 44738b3 (propositions depuis les issues GitHub) poussé sur origin/main.
 - Reste à trancher : `api/profils-locaux.json` (adresses réelles, dépôt public) ; `.claude/launch.json` non commité.
+
+## 2026-11-09 13:07 — Auteurs de commits rattachés comme membres
+
+- `github.rattacher_auteurs(projet)` : chaque auteur reconnu (Personne liée par login ou adresse) devient contributeur, appelé à chaque synchro et à chaque webhook push. Idempotent : rôle existant conservé, bots et logins inconnus ignorés.
+- Rattrapage fait : 14 membres ajoutés sur les 11 projets (J. Akaa partout, I. Mbowou sur Portail, Comptes rendus, MEDACAP84) ; second passage = 0.
+- Vérifié : 97 tests API, santé 200. Commit local, non poussé.
+- Reste : le chef de chaque projet est toujours le compte Démo, à désigner à la main ; tâches toujours vides ; `api/profils-locaux.json` à trancher.

@@ -6,7 +6,7 @@ import json
 from django.test import override_settings
 
 from projets import github
-from projets.models import Commit, Depot, Personne
+from projets.models import Commit, Depot, Membre, Personne
 
 P = "/pj-donnees/projets"
 
@@ -234,3 +234,17 @@ def test_un_sous_dossier_de_monorepo_n_importe_que_son_etiquette(client, projet,
     client().post(f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser")
     params = [p for c, p in faux_github.appels if c.endswith("/issues")][-1]
     assert params["labels"] == "mail" and Proposition.objects.count() == 1
+
+def test_les_auteurs_reconnus_deviennent_contributeurs_une_seule_fois(client, projet, faux_github):
+    depot = _depot(client, projet, faux_github)
+    dev = Personne.objects.create(sujet="dev-demo", nom="Dev", github_login="formateur-demo")
+    chef = Membre.objects.get(projet_id=projet["id"]).personne
+    url = f"{P}/{projet['id']}/depots/{depot['id']}/synchroniser"
+    assert client().post(url).status_code == 200
+    roles = dict(Membre.objects.filter(projet_id=projet["id"]).values_list("personne__sujet", "role_membre"))
+    assert roles == {chef.sujet: "chef", "dev-demo": "contributeur"}   # « inconnu » n'est pas ajoute
+    # Un role fixe a la main survit aux synchros suivantes, sans doublon.
+    Membre.objects.filter(projet_id=projet["id"], personne=dev).update(role_membre="observateur")
+    assert client().post(url).status_code == 200
+    assert Membre.objects.get(projet_id=projet["id"], personne=dev).role_membre == "observateur"
+    assert Membre.objects.filter(projet_id=projet["id"]).count() == 2
