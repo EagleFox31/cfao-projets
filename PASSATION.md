@@ -310,3 +310,7 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 ## 2026-11-09 14:55 — Descriptions des projets réécrites
 
 - Les 11 descriptions (en base, pas dans le code) sont réécrites en langage simple, en deux temps : à quoi sert le projet, puis « Importance : … ». Elles sappuient
+## 2026-11-09 14:57 — Push sur main
+
+- 0a39df5 (logos retirés) et d75bb28 (sauts de ligne des descriptions) poussés sur origin/main.
+- Reste : désigner les chefs de projet (compte Démo partout) ; tâches vides ; `api/profils-locaux.json` à trancher ; `.claude/launch.json` non commité.
