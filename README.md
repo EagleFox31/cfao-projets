@@ -16,7 +16,7 @@ seul ou intégré à la plateforme.
 | Besoin | Où |
 | --- | --- |
 | Projets (statut, dates, périmètre, avancement calculé ou manuel) | `/projets`, onglet Paramètres |
-| Membres et rôles (chef, contributeur, observateur, demandeur) | onglet Équipe |
+| Membres et rôles (pilote, contributeur, observateur, commanditaire) | onglet Équipe |
 | Tâches pondérées → avancement | onglet Avancement et tâches |
 | Dépôts GitHub rattachés, synchronisation périodique, webhook `push` | onglet Paramètres |
 | Travail de la semaine par personne : commits, lignes, diff par dépôt, derniers commits | onglet Activité GitHub, accueil |
@@ -45,7 +45,7 @@ Commandes utiles :
 make test            # pytest (API) + vitest (interface)
 make policy-test     # cerbos compile --tests
 make synchroniser    # lit une fois les dépôts GitHub de tous les projets
-make recap           # envoie le récapitulatif hebdomadaire aux chefs de projet
+make recap           # envoie le récapitulatif hebdomadaire aux pilotes de projet
 ```
 
 Développement de l'interface : `cd web && npm run dev` (port 5178, proxy vers
@@ -73,7 +73,7 @@ Cerbos (`cerbos/policies`, défaut : tout refuser). Résumé :
 | Action | Qui |
 | --- | --- |
 | Créer un projet | `superadmin`, `build_team`, `team_manager` |
-| Modifier, gérer les membres, synchroniser, décider des propositions | chef de projet, `superadmin`, `build_team` |
+| Modifier, gérer les membres, synchroniser, décider des propositions | pilote du projet, `superadmin`, `build_team` |
 | Changer le statut d'une tâche | chef, ou la personne assignée |
 | Proposer une modification | tout membre, et tout profil du même périmètre |
 | Journal des erreurs | `superadmin`, `build_team` |

@@ -314,3 +314,9 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 
 - 0a39df5 (logos retirés) et d75bb28 (sauts de ligne des descriptions) poussés sur origin/main.
 - Reste : désigner les chefs de projet (compte Démo partout) ; tâches vides ; `api/profils-locaux.json` à trancher ; `.claude/launch.json` non commité.
+
+## 2026-11-09 15:27 — Rôles : libellés Pilote et Commanditaire
+
+- Libellés affichés : chef → « Pilote », demandeur → « Commanditaire » (codes inchangés, Cerbos intact). Migration 0005 (choices seulement), textes API/web/README alignés, légende des rôles sous l’équipe.
+- Vérifié : 97 tests, build web, migration appliquée, bundle servi.
+- Reste : désigner le vrai pilote de chaque projet (Démo partout) ; tâches vides ; `api/profils-locaux.json` ; `.claude/launch.json` non commité.

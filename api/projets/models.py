@@ -16,10 +16,10 @@ STATUTS_PROJET = (
     ("archive", "Archivé"),
 )
 ROLES_MEMBRE = (
-    ("chef", "Chef de projet"),
+    ("chef", "Pilote"),
     ("contributeur", "Contributeur"),
     ("observateur", "Observateur"),
-    ("demandeur", "Demandeur"),
+    ("demandeur", "Commanditaire"),
 )
 STATUTS_TACHE = (
     ("a_faire", "À faire"),

@@ -117,7 +117,7 @@ def proposition_decidee(proposition):
         return None   # issue GitHub sans auteur rattache : personne a prevenir
     projet = proposition.projet
     verdict = "acceptée" if proposition.statut == "acceptee" else "refusée"
-    decideur = proposition.decideur.nom_complet if proposition.decideur else "le chef de projet"
+    decideur = proposition.decideur.nom_complet if proposition.decideur else "le pilote du projet"
     return envoyer(
         "projets.proposition_decidee", [proposition.auteur.email],
         f"Votre proposition sur « {projet.nom} » a été {verdict}",
@@ -131,7 +131,7 @@ def proposition_decidee(proposition):
 
 
 def recap_hebdo(personne, semaine, lignes):
-    """Recapitulatif d'une semaine ISO pour une personne (chef de projet)."""
+    """Recapitulatif d'une semaine ISO pour une personne (pilote du projet)."""
     if not lignes:
         return False
     corps = [f"Bonjour {personne.prenom or personne.nom_complet},\n",

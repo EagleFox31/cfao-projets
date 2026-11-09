@@ -1,4 +1,4 @@
-"""Envoie a chaque chef de projet le recapitulatif de la semaine ecoulee.
+"""Envoie a chaque pilote de projet le recapitulatif de la semaine ecoulee.
 
     python manage.py recap_hebdo                 # semaine ISO precedente
     python manage.py recap_hebdo --semaine 2026-W44
@@ -20,7 +20,7 @@ def semaine_precedente():
 
 
 class Command(BaseCommand):
-    help = "Recapitulatif hebdomadaire par courriel aux chefs de projet."
+    help = "Recapitulatif hebdomadaire par courriel aux pilotes de projet."
 
     def add_arguments(self, parser):
         parser.add_argument("--semaine", default=None, help="AAAA-Www (defaut : semaine precedente)")

@@ -126,7 +126,7 @@ export default function Accueil() {
             {liste.erreur && <div className="pj-erreur">{liste.erreur.message}</div>}
             {!liste.chargement && enCours.length === 0 && (
               <div className="pj-vide">
-                Aucun projet en cours. {referentiel?.peut_creer_projet ? <Link to="/projets">Créer le premier.</Link> : 'Vous serez ajouté par un chef de projet.'}
+                Aucun projet en cours. {referentiel?.peut_creer_projet ? <Link to="/projets">Créer le premier.</Link> : 'Vous serez ajouté par le pilote d’un projet.'}
               </div>
             )}
             <PortalStaggerGrid>

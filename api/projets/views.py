@@ -394,7 +394,7 @@ class MembreDetail(APIView):
             return _erreur("role_membre invalide", 400)
         if membre.role_membre == "chef" and role != "chef" and not \
                 projet.membres.filter(role_membre="chef").exclude(id=membre.id).exists():
-            return _erreur("un projet garde au moins un chef de projet", 400)
+            return _erreur("un projet garde au moins un pilote", 400)
         membre.role_membre = role
         membre.save(update_fields=["role_membre"])
         return Response(ser_membre(membre))
@@ -406,7 +406,7 @@ class MembreDetail(APIView):
         _autoriser(request, PROJET, projet.id, "manage_members", _attributs(projet, request))
         if membre.role_membre == "chef" and not \
                 projet.membres.filter(role_membre="chef").exclude(id=membre.id).exists():
-            return _erreur("un projet garde au moins un chef de projet", 400)
+            return _erreur("un projet garde au moins un pilote", 400)
         membre.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -32,7 +32,7 @@ export default function Propositions() {
       <section className="pj-panneau">
         <div className="pj-panneau-titre"><h2>Mes propositions <span className="pj-onglet-nb">{miennes.length}</span></h2></div>
         {miennes.length === 0
-          ? <div className="pj-vide">Vous n’avez encore rien proposé. Depuis un projet, le bouton « Proposer » soumet une modification à son chef de projet.</div>
+          ? <div className="pj-vide">Vous n’avez encore rien proposé. Depuis un projet, le bouton « Proposer » soumet une modification à son pilote.</div>
           : miennes.map(p => <CarteProposition key={p.id} proposition={p} referentiel={referentiel} avecProjet />)}
       </section>
     </PageModule>

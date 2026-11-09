@@ -142,7 +142,7 @@ export function FormulaireProposition({ projet, referentiel, type, cible, onFait
           </label>
         </>
       )}
-      <label className="pj-champ pj-champ--large"><span>Motif (envoyé au chef de projet)</span><input value={motif} onChange={e => setMotif(e.target.value)} /></label>
+      <label className="pj-champ pj-champ--large"><span>Motif (envoyé au pilote du projet)</span><input value={motif} onChange={e => setMotif(e.target.value)} /></label>
       {erreur && <div className="pj-erreur pj-champ--large">{erreur}</div>}
       <div className="pj-formulaire-actions">
         {onAnnuler && <button type="button" className="pj-btn" onClick={onAnnuler}>Annuler</button>}

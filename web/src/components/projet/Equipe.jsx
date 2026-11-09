@@ -108,6 +108,10 @@ export default function Equipe({ projet, referentiel, onChange }) {
         </table>
       </div>
       <p className="pj-note" style={{ marginTop: 10 }}>
+        <strong>Pilote</strong> : mène le projet au quotidien et tranche les propositions · <strong>Contributeur</strong> : réalise les tâches ·
+        {' '}<strong>Observateur</strong> : suit et propose · <strong>Commanditaire</strong> : porte le besoin, c’est à lui qu’on rend compte.
+      </p>
+      <p className="pj-note" style={{ marginTop: 10 }}>
         Les commits GitHub sont rattachés à une personne par son identifiant GitHub ; chacun peut renseigner le sien dans « Mon profil ».
       </p>
 
