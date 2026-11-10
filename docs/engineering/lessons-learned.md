@@ -66,3 +66,12 @@ exige un contrôle plus fort (test, garde-fou, règle CI).
 - **Prévention vérifiable** : job `conteneurs` de la CI ; ajouter la même commande à la
   checklist locale quand `docker-compose.prod.yml` change.
 - **Leçon** : chaque commande de CI doit être rejouée telle quelle en local avant le premier push.
+
+## 2026-11-10 — Passerelle en 502 apres reconstruction de l API
+
+- **Contexte** : au relancement du module, `/apercu/sante` repondait 502 alors que l API etait saine.
+- **Cause racine** : `proxy_pass http://api:5175` est resolu une seule fois au demarrage de nginx ; le conteneur api recree avait une nouvelle IP.
+- **Classification** : configuration reseau / reverse proxy.
+- **Resolution** : `resolver 127.0.0.11 valid=10s` et `proxy_pass` via une variable (`gateway/nginx.conf`).
+- **Prevention verifiable** : recreer `api` seul (`docker compose up -d --force-recreate api`) puis `/apercu/sante` doit repondre 200 sans redemarrer la passerelle.
+- **Lecon** : tout proxy devant un conteneur recreable resout son amont a la requete, jamais une fois au demarrage.

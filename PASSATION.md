@@ -320,3 +320,7 @@ Journal en ajout seulement : chaque session ajoute une entrée datée à la fin.
 - Libellés affichés : chef → « Pilote », demandeur → « Commanditaire » (codes inchangés, Cerbos intact). Migration 0005 (choices seulement), textes API/web/README alignés, légende des rôles sous l’équipe.
 - Vérifié : 97 tests, build web, migration appliquée, bundle servi.
 - Reste : désigner le vrai pilote de chaque projet (Démo partout) ; tâches vides ; `api/profils-locaux.json` ; `.claude/launch.json` non commité.
+
+## 2026-11-10 16:12 — Passerelle : resolution dynamique de l API
+
+- 502 apres reconstruction de l API corrige : nginx resout `api` a chaque requete (`resolver 127.0.0.11`). Verifie : api recree seul, sante 200 sans toucher la passerelle. Lecon ajoutee dans `docs/engineering/lessons-learned.md`.
